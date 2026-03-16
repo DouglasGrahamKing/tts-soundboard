@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Douglas Soundboard</title>
+  <style>
+    body {
+      background: #111;
+      color: #eee;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      margin: 10px;
+    }
+
+    h1 {
+      margin: 0 0 8px 0;
+      font-size: 20px;
+    }
+
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .search-input {
+      padding: 4px 8px;
+      border-radius: 4px;
+      border: 1px solid #444;
+      background: #222;
+      color: #eee;
+      min-width: 220px;
+    }
+
+    .button {
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      background: #333;
+      color: #eee;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .button:hover {
+      background: #555;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      padding: 6px 10px;
+      border-radius: 4px;
+      border: 1px solid #555;
+      background: #222;
+      color: #eee;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .tab-button.active {
+      background: #c0392b;
+      border-color: #e74c3c;
+    }
+
+    .tab-button:hover {
+      background: #444;
+    }
+
+    .content {
+      border-top: 1px solid #333;
+      padding-top: 8px;
+    }
+
+    .tab-content {
+      display: none;
+      gap: 6px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    }
+
+    .tab-content.active {
+      display: grid;
+    }
+
+    .sound-card {
+      background: #181818;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sound-title {
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sound-groups {
+      font-size: 10px;
+      color: #aaa;
+    }
+
+    .sound-controls {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .sound-controls .button {
+      padding: 4px 6px;
+      font-size: 11px;
+    }
+
+    .volume-slider {
+      flex: 1;
+    }
+
+    .hint {
+      font-size: 10px;
+      color: #888;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Douglas Soundboard</h1>
+
+  <div class="top-bar">
+    <input id="search" class="search-input" type="text" placeholder="Search sounds (/ to focus)..." />
+    <button class="button" onclick="stopAll()">Stop All (Space)</button>
+    <span class="hint">Tabs: 1–6 • / = Search • Space = Stop All</span>
+  </div>
+
+  <div id="tabs" class="tabs"></div>
+
+  <div class="content" id="content"></div>
+
+  <script>
+    // MASTER LIST – from your table
+    // Assumes files are in the same folder; prepend a path if needed, e.g. "sounds/Baby Crying.mp3"
+    const sounds = [
+    { file: "Asylum Noise-girls.mp3", title: "👩‍🦰Asylum Noise", groups: ["All", "Haunting"] },
+		{ file: "beast-growling-463211.mp3", title: "🦁 Beast Growling 1", groups: ["All", "Wild"] },
+		{ file: "guttural-snarl-454250.mp3", title: "🦁 Beast Growling 2", groups: ["All", "Wild"] },
+		{ file: "monster-growl-410553.mp3", title: "🦁 Beast Growling 3", groups: ["All", "Wild"] },
+		{ file: "New-Forest Birds.wav", title: "🐦 Bird Noises", groups: ["All", "Wild"] },
+		{ file: "brick-dragged-across-floor-463198.mp3", title: "🧱 Brick Dragging", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "Dark Universe Theme.mp3", title: "🎶 Dark Universe Theme", groups: ["All", "Music", "Hotness"] },
+		{ file: "Elevator.mp3", title: "🎶 Elevator", groups: ["All", "Music"] },
+		{ file: "elemental-spell-impact-flame-448566.mp3", title: "🔥 Flame Spell", groups: ["All", "Combat"] },
+		{ file: "New-Monster Roar.wav", title: "🧌🦁 Monster Roar 1", groups: ["All", "Wild"] },
+		{ file: "New-Monstor Roar 2.wav", title: "🧌🦁 Monster Roar 2", groups: ["All", "Wild"] },
+		{ file: "Neverending Death.mp3", title: "🎶 Neverending Death", groups: ["All", "Music"] },
+		{ file: "New-female Laugh 2.mp3", title: "‍👩‍🦰🤣 Woman Cackling 1", groups: ["All", "Haunting"] },
+		{ file: "New-Female Laugh.mp3", title: "‍👩‍🦰🤣 Woman Cackling 2", groups: ["All", "Haunting"] },
+		{ file: "evil-girl-laughing-401720.mp3", title: "‍👩‍🦰🤣 Woman Cackling 3", groups: ["All", "Haunting"] },
+		{ file: "witch-laugh-401713.mp3", title: "‍👩‍🦰🤣 Woman Cackling 4", groups: ["All", "Haunting"] },
+		{ file: "Scream 1.mp3", title: "‍👩‍🦰😱 Woman Screaming", groups: ["All", "Haunting"] },
+		{ file: "XCOM AHHH.wav", title: "😱 Xcom AHHH", groups: ["All", "Combat"] },
+		{ file: "New Zombie.wav", title: "🧟😴 Zombie Moan 1", groups: ["All", "Undead"] },
+		{ file: "New-Zombie.mp3", title: "🧟😴 Zombie Moan 2", groups: ["All", "Undead"] },
+		{ file: "free-zombie-moan-sounds-54824.mp3", title: "🧟😴 Zombie Moan 3", groups: ["All", "Undead"] },
+		{ file: "vampire-67336.mp3", title: "🧟😴 Zombie Moan 4", groups: ["All", "Undead"] },
+		{ file: "zombie-sfx-450450.mp3", title: "🧟😴 Zombie Moan 5", groups: ["All", "Undead"] },
+		{ file: "New Zombie Pain.wav", title: "🧟🤕 Zombie Pain", groups: ["All", "Undead"] },
+		{ file: "zombiesmoaningnofx-33905.mp3", title: "🧟🧟😴 Zombies Moaning", groups: ["All", "Undead"] },
+		{ file: "Baby Crying.mp3", title: "👶😭Baby Crying", groups: ["All", "Haunting"] },
+		{ file: "New-Bad Vibe.mp3", title: "😧Bad Vibe", groups: ["All", "Music"] },
+		{ file: "Bats 1.mp3", title: "🦇Bats 1", groups: ["All", "Wild"] },
+		{ file: "Bats 2.mp3", title: "🦇Bats 2", groups: ["All", "Wild"] },
+		{ file: "Bell 1.mp3", title: "🔔Bell 1", groups: ["All", "Haunting"] },
+		{ file: "New-Bell.mp3", title: "🔔Bell 2", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "New-Church Bell.wav", title: "🔔Bell 3", groups: ["All", "Haunting"] },
+    { file: "Calling Whistle.mp3", title: "📯Calling Whistle", groups: ["All", "Wild"] },
+		{ file: "New-Campfire.mp3", title: "🔥Camp Fire", groups: ["All", "Wild"] },
+		{ file: "Cat 1.mp3", title: "🐈‍⬛Cat 1", groups: ["All", "Wild"] },
+		{ file: "meow-sfx-405456.mp3", title: "🐈‍⬛Cat 2", groups: ["All", "Wild"] },
+		{ file: "New-Cast Growling.mp3", title: "🐈‍⬛Cat Growling", groups: ["All", "Wild"] },
+		{ file: "New-Cat Meow.mp3", title: "🐈‍⬛Cat Meowing", groups: ["All", "Wild"] },
+		{ file: "Chains 1.mp3", title: "⛓️Chains 1", groups: ["All", "Haunting"] },
+		{ file: "Child 1.mp3", title: "🧒👻Child 1", groups: ["All", "Haunting"] },
+		{ file: "Creaking Door Spooky 1.mp3", title: "🚪Creaking Door  1", groups: ["All", "Haunting"] },
+		{ file: "Creaking Door Spooky 2.mp3", title: "🚪Creaking Door 2", groups: ["All", "Haunting"] },
+		{ file: "Creaking Door Spooky 3.mp3", title: "🚪Creaking Door 3", groups: ["All", "Haunting"] },
+		{ file: "Old Door Creaking.mp3", title: "🚪Creaking Door 4", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "New-Sword Critical Hit.wav", title: "🪓🪓Critical Sword Hit", groups: ["All", "Combat"] },
+    { file: "Crowd-in-panic.mp3", title: "🧑‍🤝‍🧑Crowd in Panic", groups: ["All", "Combat"] },
+    { file: "crowd-panic-fear.mp3", title: "🧑‍🤝‍🧑Crowd in Panic 2", groups: ["All", "Combat"] },
+    { file: "crowd panic.mp3", title: "🧑‍🤝‍🧑Crowd in Panic 3", groups: ["All", "Combat"] },
+    { file: "He is ancient He is the land.mp3", title: "🗣️Death House Chant", groups: ["All", "Music", "Hotness"] },
+		{ file: "Dragon Roaring.mp3", title: "🐲Dragon Roaring", groups: ["All", "Wild"] },
+    { file: "dream-sound-effect.mp3", title: "💤Dream Sound Effect", groups: ["All", "Haunting"] },
+    { file: "dream-sound-effect-downscaled.mp3", title: "💤Dream Sound Effect 2", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "Dun Dun Dun.mp3", title: "😜Dun Dun Dun", groups: ["All", "Music"] },
+		{ file: "New-Explosion.wav", title: "🧨Explosion", groups: ["All", "Combat"] },
+    { file: "Fatality.mp3", title: "💀Fatality", groups: ["All", "Combat", "Hotness"] },
+    { file: "mortal_kombat_2_finish_him.mp3", title: "💀Finish Him", groups: ["All", "Combat", "Hotness"] },
+		{ file: "Footsteps.mp3", title: "👣Footsteps 1", groups: ["All", "Haunting"] },
+		{ file: "New Foot steps.mp3", title: "👣Footsteps 2", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "New Foot steps 2.mp3", title: "👣Footsteps 3", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "Ghost Noise 1.mp3", title: "👻Ghost Noise 1", groups: ["All", "Haunting", "Undead"] },
+		{ file: "Ghost Noise 2.mp3", title: "👻Ghost Noise 2", groups: ["All", "Haunting", "Undead"] },
+		{ file: "New-Ghost.mp3", title: "👻Ghost Noise 3", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "New_Ghost 2.mp3", title: "👻Ghost Noise 4", groups: ["All", "Haunting"] },
+		{ file: "New_Ghost 2.mp3", title: "👻Ghost Noise 4", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "ghostly-moaning-256453.mp3", title: "👻Ghost Noise 5", groups: ["All", "Haunting", "Undead"] },
+		{ file: "gibbering-mouther-shriek-98620.mp3", title: "👄Gibbering Mouther", groups: ["All", "Undead", "Hotness"] },
+		{ file: "Heart Beats.mp3", title: "❤️Heart Beats 1", groups: ["All", "Haunting"] },
+		{ file: "New-Heartbeat.mp3", title: "❤️Heart Beats 2", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "New-Breathing.mp3", title: "😤Heavy Breathing", groups: ["All", "Haunting"] },
+		{ file: "i-see-you-creepy-ghost-whisper-401711.mp3", title: "🗣️I see you", groups: ["All", "Haunting"] },
+		{ file: "Inception.mp3", title: "😜Inception", groups: ["All", "Music"] },
+		{ file: "Intense Knocking 1.mp3", title: "✊✊Intense Knocking 1", groups: ["All", "Haunting", "Hotness"] },
+    { file: "kungfu4.mp3", title: "🥋Kung Fu SFX", groups: ["All", "Combat", "Hotness"] },
+		{ file: "Knocking On Door 1.mp3", title: "🚪✊Knocking On Door 1", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "Knocking On Door 2.mp3", title: "🚪✊Knocking On Door 12", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "Law and Order.mp3", title: "😜Law and Order", groups: ["All"] },
+		{ file: "let-me-out-1-85865.mp3", title: "🗣️Let me out 1", groups: ["All", "Haunting"] },
+		{ file: "let-me-out.mp3", title: "🗣️Let me out 2", groups: ["All", "Haunting"] },
+		{ file: "strange-lullaby-28691.mp3", title: "🎶👩‍🦳Lullaby", groups: ["All", "Haunting"] },
+		{ file: "New-Male Pain.wav", title: "👨🤕Male Pain", groups: ["All", "Combat"] },
+		{ file: "New-Man Falling 2.mp3", title: "👨🪂Man Falling 1", groups: ["All", "Combat"] },
+		{ file: "New-Man Falling.mp3", title: "👨🪂Man Falling 2", groups: ["All", "Combat"] },
+		{ file: "Many Wolves Howling.mp3", title: "🐺🐺🐺Many Wolves Howling", groups: ["All", "Wild", "Hotness"] },
+		{ file: "Medium Pack Of Wolves Howling.mp3", title: "🐺🐺Medium Pack Of Wolves Howling", groups: ["All", "Wild", "Hotness"] },
+		{ file: "New-Laugh 2.mp3", title: "🧛🤣Menacing Laugh 1", groups: ["All", "Haunting"] },
+		{ file: "New-Laugh.mp3", title: "🧛🤣Menacing Laugh 2", groups: ["All", "Haunting"] },
+		{ file: "sinister-laugh-431478.mp3", title: "🧛🤣Menacing Laugh 3", groups: ["All", "Haunting"] },
+		{ file: "wicked-evil-laugh-431489.mp3", title: "🧛🤣Menacing Laugh 4", groups: ["All", "Haunting"] },
+		{ file: "New-Creature Pain.wav", title: "🧌🤕Monster Pain", groups: ["All", "Wild", "Combat"] },
+		{ file: "New-Muffled Cry.mp3", title: "🙊😭Muffled Cry", groups: ["All", "Haunting"] },
+		{ file: "New-Music Box 2.mp3", title: "💃🎁Music Box 1", groups: ["All", "Haunting"] },
+		{ file: "New-Music Box 3.mp3", title: "💃🎁Music Box 2", groups: ["All", "Haunting"] },
+		{ file: "New-Music Box.mp3", title: "💃🎁Music Box 3", groups: ["All", "Haunting"] },
+		{ file: "scary-music-box-untuned-427401.mp3", title: "💃🎁Music Box 4", groups: ["All", "Haunting"] },
+		{ file: "New-Pained Roar.wav", title: "🤕🦁Pained Roar", groups: ["All", "Wild", "Combat"] },
+		{ file: "Piano 1.mp3", title: "🎹Piano 1", groups: ["All", "Music"] },
+		{ file: "New-Pratfall.wav", title: "🍌🤡Pratfall", groups: ["All", "Music"] },
+		{ file: "Psycho.mp3", title: "😜Psycho", groups: ["All", "Music"] },
+		{ file: "New-Punch.wav", title: "🥊Punch", groups: ["All", "Combat"] },
+		{ file: "New-Rain.wav", title: "🌧️Rain", groups: ["All", "Wild"] },
+		{ file: "Raven 1.mp3", title: "🐦‍⬛Raven 1", groups: ["All", "Wild", "Hotness"] },
+		{ file: "Raven 2.mp3", title: "🐦‍⬛Raven 2", groups: ["All", "Wild", "Hotness"] },
+		{ file: "New-River.wav", title: "🚣River Noise 2", groups: ["All", "Wild"] },
+		{ file: "New-Wet Plop.wav", title: "💧Single Drip", groups: ["All", "Wild"] },
+		{ file: "New-Sword Hit 2.mp3", title: "🪓Sword Hit 1", groups: ["All", "Combat"] },
+		{ file: "New-Sword Hit.wav", title: "🪓Sword Hit 2", groups: ["All", "Combat"] },
+		{ file: "New-Flesh.mp3", title: "🪓Sword Hit 3", groups: ["All", "Combat"] },
+		{ file: "Tapping 1.mp3", title: "👉Tapping 1", groups: ["All", "Haunting", "Hotness"] },
+		{ file: "New-Terror.wav", title: "😱🎶Terror Music 1", groups: ["All", "Music"] },
+		{ file: "New-Transition 2.wav", title: "😱🎶Terror Music 2", groups: ["All", "Music"] },
+		{ file: "Thunder 1.mp3", title: "⛈️Thunder 1", groups: ["All", "Wild"] },
+		{ file: "Thunder 2.mp3", title: "⛈️Thunder 2", groups: ["All", "Wild"] },
+		{ file: "Thunder 3.mp3", title: "⛈️Thunder 3", groups: ["All", "Wild"] },
+		{ file: "Thunder 4.mp3", title: "⛈️Thunder 4", groups: ["All", "Wild"] },
+		{ file: "Thunder 5.mp3", title: "⛈️Thunder 5", groups: ["All", "Wild"] },
+		{ file: "Thunder 6.mp3", title: "⛈️Thunder 6", groups: ["All", "Wild"] },
+		{ file: "dry-thunder-rumble-459101.mp3", title: "⛈️Thunder 7", groups: ["All", "Wild"] },
+		{ file: "New-Tick Tock.wav", title: "🕰️Tick Tock", groups: ["All", "Haunting"] },
+		{ file: "New-Tree Falling.mp3", title: "🌳🪓Tree Falling", groups: ["All", "Wild"] },
+		{ file: "Violin 1.mp3", title: "🎻Violin 1", groups: ["All", "Music"] },
+		{ file: "Violin 2.mp3", title: "🎻Violin 2", groups: ["All", "Music"] },
+		{ file: "Violin 3.mp3", title: "🎻Violin 3", groups: ["All", "Music"] },
+		{ file: "Werewolf Howl.mp3", title: "🐺Werewolf Howl", groups: ["All", "Wild", "Hotness"] },
+		{ file: "New-Whisper.mp3", title: "😮‍💨Whisper", groups: ["All", "Haunting"] },
+		{ file: "Wind 1.mp3", title: "🌬️Wind 1", groups: ["All", "Wild"] },
+		{ file: "New-Wind.mp3", title: "🌬️Wind 2", groups: ["All", "Wild"] },
+		{ file: "cemetery-wind-467488.mp3", title: "🌬️Wind 3", groups: ["All", "Wild"] },
+		{ file: "spooky-wind-429221.mp3", title: "🌬️Wind 4", groups: ["All", "Wild"] },
+		{ file: "winter-landscape-447500.mp3", title: "🌬️Wind 5", groups: ["All", "Wild"] },
+		{ file: "Wolf Yipping.mp3", title: "🐺Wolf Yipping", groups: ["All", "Wild", "Hotness"] },
+		{ file: "Crying.mp3", title: "👩‍🦰😭Woman Crying", groups: ["All", "Haunting"] },
+		{ file: "New-Female Pain.wav", title: "👩‍🦰🤕Woman Pain", groups: ["All", "Haunting"] }
+    ];
+
+    const GROUP_ORDER = ["All", "Haunting", "Wild", "Music", "Undead", "Combat", "Hotness"];
+
+    const audioState = new Map(); // key: index, value: { audio, volume }
+
+    function getOrCreateAudio(index) {
+      let state = audioState.get(index);
+      if (!state) {
+        const audio = new Audio(sounds[index].file);
+        audio.volume = 1;
+        state = { audio, volume: 1 };
+        audioState.set(index, state);
+      }
+      return state;
+    }
+
+    function playSound(index) {
+      const state = getOrCreateAudio(index);
+      state.audio.currentTime = 0;
+      state.audio.play();
+    }
+
+    function stopSound(index) {
+      const state = audioState.get(index);
+      if (state) {
+        state.audio.pause();
+        state.audio.currentTime = 0;
+      }
+    }
+
+    function setVolume(index, value) {
+      const state = getOrCreateAudio(index);
+      state.volume = value;
+      state.audio.volume = value;
+    }
+
+    function stopAll() {
+      audioState.forEach(state => {
+        state.audio.pause();
+        state.audio.currentTime = 0;
+      });
+    }
+
+    function buildUI() {
+      const tabsDiv = document.getElementById("tabs");
+      const contentDiv = document.getElementById("content");
+
+      // Determine which groups actually exist
+      const groupsPresent = new Set();
+      sounds.forEach(s => s.groups.forEach(g => groupsPresent.add(g)));
+
+      const groups = GROUP_ORDER.filter(g => groupsPresent.has(g));
+
+      // Build tabs
+      tabsDiv.innerHTML = groups.map((g, i) =>
+        `<button class="tab-button" data-group="${g}" onclick="showTab('${g}')" data-index="${i}">${g}</button>`
+      ).join("");
+
+      // Build content per group
+      contentDiv.innerHTML = groups.map(g => {
+        const groupSounds = sounds
+          .map((s, idx) => ({ ...s, idx }))
+          .filter(s => s.groups.includes(g));
+
+        const cards = groupSounds.map(s => `
+          <div class="sound-card" data-sound-index="${s.idx}">
+            <div class="sound-title" title="${s.title}">${s.title}</div>
+            <div class="sound-groups">${s.groups.join(", ")}</div>
+            <div class="sound-controls">
+              <button class="button" onclick="playSound(${s.idx})">Play</button>
+              <button class="button" onclick="stopSound(${s.idx})">Stop</button>
+              <input class="volume-slider" type="range" min="0" max="1" step="0.01"
+                     value="1" oninput="setVolume(${s.idx}, parseFloat(this.value))" />
+            </div>
+          </div>
+        `).join("");
+
+        return `<div class="tab-content" id="tab-${g}">${cards}</div>`;
+      }).join("");
+
+      if (groups.length > 0) {
+        showTab(groups[0]);
+      }
+    }
+
+    function showTab(group) {
+      const allTabs = document.querySelectorAll(".tab-button");
+      const allContents = document.querySelectorAll(".tab-content");
+
+      allTabs.forEach(btn => {
+        btn.classList.toggle("active", btn.getAttribute("data-group") === group);
+      });
+
+      allContents.forEach(div => {
+        div.classList.toggle("active", div.id === `tab-${group}`);
+      });
+
+      currentTab = group;
+    }
+
+    let currentTab = null;
+
+    function applySearch() {
+      const query = document.getElementById("search").value.trim().toLowerCase();
+
+      const allCards = document.querySelectorAll(".sound-card");
+      if (!query) {
+        // Show all cards in the active tab
+        allCards.forEach(card => {
+          card.style.display = "";
+        });
+        return;
+      }
+
+      allCards.forEach(card => {
+        const idx = parseInt(card.getAttribute("data-sound-index"), 10);
+        const s = sounds[idx];
+        const haystack = (s.title + " " + s.file + " " + s.groups.join(" ")).toLowerCase();
+        card.style.display = haystack.includes(query) ? "" : "none";
+      });
+    }
+
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      const activeElement = document.activeElement;
+      const isTyping = activeElement && (activeElement.tagName === "INPUT" || activeElement.tagName === "TEXTAREA");
+
+      if (e.key === "/" && !isTyping) {
+        e.preventDefault();
+        document.getElementById("search").focus();
+        document.getElementById("search").select();
+        return;
+      }
+
+      if (e.code === "Space" && !isTyping) {
+        e.preventDefault();
+        stopAll();
+        return;
+      }
+
+      // 1–6 for tabs
+      if (!isTyping && e.key >= "1" && e.key <= "6") {
+        const index = parseInt(e.key, 10) - 1;
+        const tabs = document.querySelectorAll(".tab-button");
+        if (tabs[index]) {
+          const group = tabs[index].getAttribute("data-group");
+          showTab(group);
+        }
+      }
+    });
+
+    document.getElementById("search").addEventListener("input", applySearch);
+
+    window.onload = buildUI;
+  </script>
+</body>
+</html>	
