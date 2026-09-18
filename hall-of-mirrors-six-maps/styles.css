@@ -264,6 +264,11 @@ body:not(.show-gm) .feature.gm-only { opacity: 0; }
 .piece-inspector { min-height: 58px; color: #555047; }
 .inspector-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 5px; }
 .coordinate-badge { padding: 2px 6px; color: white; background: #565c5d; border-radius: 3px; font-size: 11px; font-weight: 700; }
+.reference-gallery { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; margin-top: 13px; }
+.reference-card { overflow: hidden; border: 1px solid #aaa291; border-radius: 4px; color: #302d29; background: #ded7ca; text-decoration: none; }
+.reference-card img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #242827; }
+.reference-card span { display: block; padding: 7px; font-size: 11px; font-weight: 700; line-height: 1.2; }
+.reference-card:hover { border-color: var(--gold); background: #eee7da; }
 details summary { cursor: pointer; font-weight: 700; }
 details ul { margin: 12px 0 0; padding-left: 20px; color: #4e4942; }
 details li + li { margin-top: 4px; }

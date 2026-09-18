@@ -325,7 +325,29 @@ const scenes = [
   }
 ];
 
-scenes.splice(6);
+const sceneReferences = {
+  pain: [
+    { title: "Interior of Shabby Mirror Chamber", src: "reference_images/first-visit-shabby-mirror-chamber.jpg" },
+    { title: "Dangerously Hot Glass", src: "reference_images/first-visit-dangerously-hot-glass.jpg" },
+    { title: "Wraith Mirror", src: "reference_images/first-visit-wraith-mirror.jpg" }
+  ],
+  loss: [
+    { title: "Wagon Exterior", src: "reference_images/return-wagon-exterior.jpg" },
+    { title: "Wagon Door", src: "reference_images/return-wagon-door.jpg" },
+    { title: "Impossibly Deep Interior", src: "reference_images/return-impossibly-deep-interior.jpg" },
+    { title: "Ilona's Departure", src: "reference_images/return-ilonas-departure.jpg" }
+  ],
+  shame: [
+    { title: "Open Mirror Enclosure", src: "reference_images/cure-open-mirror-enclosure.jpg" },
+    { title: "Alignment Mirror", src: "reference_images/cure-alignment-mirror.jpg" },
+    { title: "Open Alignment and Hall Entrance", src: "reference_images/cure-open-alignment-and-hall-entrance.jpg" }
+  ],
+  finale: [
+    { title: "Anchor Mirrors", src: "reference_images/unmade-anchor.jpg" },
+    { title: "Lantern Area and Terminal Mirror", src: "reference_images/unmade-lantern-area-and-terminal-mirror.jpg" },
+    { title: "Open Nave", src: "reference_images/unmade-open-nave.jpg" }
+  ]
+};
 
 const state = {
   sceneIndex: 0,
@@ -351,7 +373,9 @@ const elements = {
   reset: document.querySelector("#resetScene"),
   inspector: document.querySelector("#pieceInspector"),
   manifest: document.querySelector("#componentManifest"),
-  gmOverlay: document.querySelector("#gmOverlay")
+  gmOverlay: document.querySelector("#gmOverlay"),
+  referencePanel: document.querySelector("#referencePanel"),
+  referenceGallery: document.querySelector("#referenceGallery")
   ,rulesTitle: document.querySelector("#rulesTitle")
   ,ruleGoal: document.querySelector("#ruleGoal")
   ,ruleSetup: document.querySelector("#ruleSetup")
@@ -586,6 +610,26 @@ function renderManifest(scene) {
   });
 }
 
+function renderReferences(scene) {
+  const references = sceneReferences[scene.id] || [];
+  elements.referencePanel.hidden = references.length === 0;
+  elements.referenceGallery.replaceChildren(...references.map((reference) => {
+    const link = document.createElement("a");
+    link.className = "reference-card";
+    link.href = reference.src;
+    link.target = "_blank";
+    link.rel = "noopener";
+
+    const image = document.createElement("img");
+    image.src = reference.src;
+    image.alt = reference.title;
+    const label = document.createElement("span");
+    label.textContent = reference.title;
+    link.append(image, label);
+    return link;
+  }));
+}
+
 function fillRuleList(element, items) {
   element.innerHTML = "";
   items.forEach((item) => {
@@ -621,6 +665,7 @@ function render() {
   renderStep(scene);
   renderInspector(scene);
   renderManifest(scene);
+  renderReferences(scene);
   renderRules(scene);
 }
 
