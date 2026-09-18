@@ -144,31 +144,35 @@ const scenes = [
     cols: 10,
     rows: 7,
     rules: {
-      goal: "Open the Honest Mirror and move the party into the Gloamglass.",
-      setup: ["Place the sealed 2 x 4 Honest Mirror.", "Put one mundane lantern and three knock counters in reach.", "Keep Truth and Fear Bruise tokens in the tray."],
-      actions: ["Extinguish lights.", "Place the lantern.", "Knock or speak to the unresponsive mirror.", "A character may state only what the fear protects."],
-      solve: ["The room is otherwise dark.", "Exactly one mundane lantern is in the Truth Zone.", "The party knocks three times and waits for the fourth.", "At least one PC names a fear and what it protects."],
-      failure: "A silent PC may cross holding a speaker's hand but takes one Fear Bruise. A false statement leaves the mirror solid and reveals a clue."
+      goal: "Place all seven PCs where the Honest Mirror shows them already standing.",
+      setup: ["Place the sealed Honest Mirror on the east wall.", "Arrange seven numbered reflection marks on the floor to match the formation shown in the glass.", "Begin every PC west of the marked formation."],
+      actions: ["Inspect the mirror to see the party's completed formation.", "Move a PC onto the floor mark bearing that character's number.", "Reposition freely until every reflected figure aligns with its real counterpart."],
+      solve: ["Match P1 through P7 to the seven numbered floor marks.", "Each correct placement lights its mark and makes that reflection move in time.", "When all seven marks are occupied, the room automatically shifts the entire party into the Gloamglass."],
+      failure: "There is no damage or forced confession. An incorrect placement stays dark, and its reflection points toward the correct empty mark."
     },
-    manifest: ["10 x 7 square floor mat", "1 two-square Honest Mirror", "1 mundane lantern", "3 knock counters", "7 PC miniatures", "7 optional truth/warning tokens", "Fear Bruise tokens"],
+    manifest: ["10 x 7 square floor mat", "1 two-square Honest Mirror", "7 PC miniatures", "7 numbered reflection marks", "1 inscription strip", "1 Gloamglass overlay"],
     features: [
       { id:"hm", type:"mirror", x:8, y:2, w:2, h:4, label:"HONEST MIRROR" },
-      { id:"portal", type:"portal", x:8, y:2, w:2, h:4, label:"GLOAMGLASS", hidden:true },
-      { id:"truth-zone", type:"zone", x:5, y:3, w:2, h:2, label:"TRUTH\nZONE" }
+      { id:"prompt", type:"zone", x:3, y:1, w:5, h:1, label:"STAND WHERE YOU ALREADY WAIT. WHEN NONE REMAINS APART, THE ROAD WILL MOVE." },
+      { id:"place1", type:"rune", x:4, y:2, w:1, h:1, label:"P1" },
+      { id:"place2", type:"rune", x:5, y:2, w:1, h:1, label:"P2" },
+      { id:"place3", type:"rune", x:6, y:2, w:1, h:1, label:"P3" },
+      { id:"place4", type:"rune", x:4, y:4, w:1, h:1, label:"P4" },
+      { id:"place5", type:"rune", x:6, y:4, w:1, h:1, label:"P5" },
+      { id:"place6", type:"rune", x:4, y:6, w:1, h:1, label:"P6" },
+      { id:"place7", type:"rune", x:6, y:6, w:1, h:1, label:"P7" },
+      { id:"shift", type:"portal", x:1, y:1, w:10, h:7, label:"THE WHOLE ROOM SHIFTS INTO THE GLOAMGLASS", hidden:true }
     ],
     pieces: [
-      ...pcPieces([[2,2],[2,3],[2,4],[2,5],[3,3],[3,4],[3,5]]),
-      { id:"lantern", name:"Single Mundane Lantern", initials:"L", type:"light", x:4, y:4, note:"Place this in front of the Honest Mirror." },
-      { id:"truth", name:"Fear Has Meaning", initials:"T", type:"object", x:5, y:4, visible:false, note:"Place after a character names a fear and what it protects." },
-      { id:"bruise", name:"Fear Bruise", initials:"B", type:"counter", x:3, y:5, visible:false, note:"A silent traveler may enter by holding a speaker's hand and taking this token." }
+      ...pcPieces([[2,2],[2,3],[2,4],[2,5],[2,6],[3,3],[3,5]])
     ],
-    counters: [{ id:"requirements", label:"Keys complete", max:4, value:0 }],
+    counters: [{ id:"placements", label:"Places filled", max:7, value:0 }],
     steps: [
-      { actor:"GM setup", title:"Four physical requirements", instruction:"Use four spaces on a key track: darkness, one mundane lantern, three knocks, and a fear linked to what it protects.", tags:["Checklist puzzle"] },
-      { actor:"Party", title:"Darkness and one lantern", instruction:"Remove every other light piece. Move the mundane lantern into the Truth Zone. Fill the first two key spaces.", tags:["Keys 1-2"], patch:{ pieces:{lantern:{x:5,y:4}}, counters:{requirements:2} } },
-      { actor:"PC 3", title:"Knock and wait", instruction:"Place three knock counters. The GM taps once from behind the Honest Mirror. Fill the third key space.", tags:["Key 3"], patch:{ counters:{requirements:3} } },
-      { actor:"PC 3", title:"Place a truth token", instruction:"State a character fear and what it protects, then place T beside the lantern. This is characterization, not a skill check.", tags:["Key 4", "No roll"], patch:{ pieces:{truth:{visible:true}}, counters:{requirements:4}, features:{portal:{hidden:false},hm:{hidden:true}} } },
-      { actor:"Party", title:"Cross the mirror", instruction:"Move speaking PCs through freely. A silent PC may pair bases with a speaker and take one Fear Bruise token.", tags:["Threshold open"], patch:{ pieces:{pc1:{x:8,y:3},pc2:{x:8,y:4},pc3:{x:9,y:3},pc4:{x:9,y:4},bruise:{visible:true,x:7,y:5}} } }
+      { actor:"GM setup", title:"The mirror shows the ending first", instruction:"The glass reflects all seven PCs standing in a precise formation. Matching numbered marks glimmer on the floor beneath the reflected figures.", tags:["Visible prompt", "Placement puzzle"] },
+      { actor:"Mirror inscription", title:"The instruction appears", instruction:"Read: 'Stand where you already wait. When none remains apart, the road will move.' A misplaced PC's reflection silently points to the correct empty mark.", tags:["No roll", "Self-correcting clue"] },
+      { actor:"Party", title:"Fill the first positions", instruction:"Move P1, P2, and P3 onto their matching marks. Each mark lights and that PC's reflection begins moving normally.", tags:["3 of 7 placed"], patch:{ pieces:{pc1:{x:4,y:2},pc2:{x:5,y:2},pc3:{x:6,y:2}}, counters:{placements:3} } },
+      { actor:"Party", title:"Complete the formation", instruction:"Move P4 through P7 onto their matching marks. The seventh mark lights; no door opens and the mirror remains solid.", tags:["7 of 7 placed", "Puzzle solved"], patch:{ pieces:{pc4:{x:4,y:4},pc5:{x:6,y:4},pc6:{x:4,y:6},pc7:{x:6,y:6}}, counters:{placements:7} } },
+      { actor:"The Honest Mirror", title:"The road moves around them", instruction:"All reflections turn together. Without crossing the glass or taking a step, the party and the room shift into the Gloamglass. Replace this map with The First Visit.", tags:["Automatic transition", "No mirror crossing"], patch:{ features:{shift:{hidden:false},hm:{hidden:true},prompt:{hidden:true}} } }
     ]
   },
   {
