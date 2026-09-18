@@ -144,34 +144,38 @@ const scenes = [
     cols: 10,
     rows: 7,
     rules: {
-      goal: "Deduce which PC belongs on each of the seven symbol-marked stations.",
-      setup: ["Place seven unlabeled stations in a three-two-two forked formation.", "Keep each PC's existing base color visible: blue, red, green, ochre, violet, teal, and rose.", "Show the five relational clues in the Honest Mirror; do not show the solved formation."],
-      actions: ["Read the reflection clues and compare rows, columns, and adjacency.", "Move PCs among the seven stations to test an arrangement.", "When the party asks to test a solution, check all seven placements together."],
-      solve: ["Red occupies the only station between two others: blue on its left and green on its right.", "Ochre stands directly below blue; violet stands directly below green.", "Teal shares blue's column but is not adjacent to blue; rose shares green's column but is not adjacent to green.", "When all seven deductions are satisfied, the room automatically shifts the entire party into the Gloamglass."],
-      failure: "An incorrect arrangement makes every station go dark. The mirror reveals which clue is violated, but never identifies a character's destination."
+      goal: "Decode the mirror's hidden four-PC sequence using Mastermind feedback.",
+      setup: ["Place four ordered stations before the mirror: Crown, Eye, Key, and Flame.", "Place three unnumbered witness circles behind the code row.", "Secret code, west to east: ochre, blue, teal, red (P4, P1, P6, P2)."],
+      actions: ["Choose four PCs and place them on Crown, Eye, Key, and Flame in order.", "Place the remaining three PCs on the witness circles, then knock once to submit.", "Read the mirror's black and white shards, rearrange the party, and submit again."],
+      solve: ["Each black shard means one chosen PC is on the correct station.", "Each white shard means one chosen PC belongs in the code but stands on the wrong station.", "The shards never reveal which PCs they score.", "Four black shards shift the whole room and all seven PCs into the Gloamglass."],
+      failure: "Wrong attempts cause no harm. The mirror clears its shards when any PC leaves a station, allowing another guess."
     },
-    manifest: ["10 x 7 square floor mat", "1 two-square Honest Mirror", "7 PC miniatures with colored bases", "7 symbol-marked stations", "5 reflection clue strips", "1 Gloamglass overlay"],
+    manifest: ["10 x 7 square floor mat", "1 two-square Honest Mirror", "7 PC miniatures with colored bases", "4 ordered symbol stations", "3 witness circles", "4 black and 4 white feedback shards", "1 Gloamglass overlay"],
     features: [
       { id:"hm", type:"mirror", x:8, y:2, w:2, h:4, label:"HONEST MIRROR" },
-      { id:"prompt", type:"zone", x:3, y:1, w:5, h:1, label:"SET THE SEVEN TRUE. THE ROAD WILL MOVE." },
-      { id:"crown", type:"rune", x:4, y:2, w:1, h:1, label:"CROWN" },
-      { id:"eye", type:"rune", x:5, y:2, w:1, h:1, label:"EYE" },
-      { id:"key", type:"rune", x:6, y:2, w:1, h:1, label:"KEY" },
-      { id:"flame", type:"rune", x:4, y:4, w:1, h:1, label:"FLAME" },
-      { id:"bell", type:"rune", x:6, y:4, w:1, h:1, label:"BELL" },
-      { id:"moon", type:"rune", x:4, y:6, w:1, h:1, label:"MOON" },
-      { id:"thorn", type:"rune", x:6, y:6, w:1, h:1, label:"THORN" },
+      { id:"prompt", type:"zone", x:3, y:1, w:5, h:1, label:"FOUR BEFORE THE GLASS. THREE BEAR WITNESS. KNOCK TO BE JUDGED." },
+      { id:"crown", type:"rune", x:4, y:3, w:1, h:1, label:"CROWN" },
+      { id:"eye", type:"rune", x:5, y:3, w:1, h:1, label:"EYE" },
+      { id:"key", type:"rune", x:6, y:3, w:1, h:1, label:"KEY" },
+      { id:"flame", type:"rune", x:7, y:3, w:1, h:1, label:"FLAME" },
+      { id:"witness1", type:"zone", x:4, y:5, w:1, h:1, label:"WITNESS" },
+      { id:"witness2", type:"zone", x:5.5, y:5, w:1, h:1, label:"WITNESS" },
+      { id:"witness3", type:"zone", x:7, y:5, w:1, h:1, label:"WITNESS" },
       { id:"shift", type:"portal", x:1, y:1, w:10, h:7, label:"THE WHOLE ROOM SHIFTS INTO THE GLOAMGLASS", hidden:true }
     ],
     pieces: [
       ...pcPieces([[2,2],[2,3],[2,4],[2,5],[2,6],[3,3],[3,5]])
     ],
-    counters: [{ id:"clues", label:"Clues satisfied", max:5, value:0 }],
+    counters: [
+      { id:"exact", label:"Black shards", max:4, value:0 },
+      { id:"misplaced", label:"White shards", max:4, value:0 }
+    ],
     steps: [
-      { actor:"GM setup", title:"Seven stations, no destinations", instruction:"The floor bears Crown, Eye, Key, Flame, Bell, Moon, and Thorn. The mirror shows seven blurred colored figures, but none stands clearly over a symbol.", tags:["Placement logic", "Answer concealed"] },
-      { actor:"Honest Mirror", title:"Five clues appear", instruction:"Read: 'Red stands between blue to the west and green to the east. Ochre is directly below blue. Violet is directly below green. Teal shares blue's column but not blue's edge. Rose shares green's column but not green's edge.'", tags:["Relational clues", "Unique solution"] },
-      { actor:"Party", title:"Deduce the upper row", instruction:"Only the top row has three consecutive stations, so blue, red, and green must occupy Crown, Eye, and Key in that order.", tags:["Clue 1"], patch:{ pieces:{pc1:{x:4,y:2},pc2:{x:5,y:2},pc3:{x:6,y:2}}, counters:{clues:1} } },
-      { actor:"Party", title:"Complete the two columns", instruction:"Ochre and violet take Flame and Bell directly below blue and green. Teal and rose then take Moon and Thorn, sharing those columns without touching the upper PCs.", tags:["Clues 2-5", "Puzzle solved"], patch:{ pieces:{pc4:{x:4,y:4},pc5:{x:6,y:4},pc6:{x:4,y:6},pc7:{x:6,y:6}}, counters:{clues:5} } },
+      { actor:"GM setup", title:"Four are judged; three bear witness", instruction:"The Crown, Eye, Key, and Flame stations shine before the mirror. Three dim circles wait behind them. The mirror contains eight empty shard-shaped sockets.", tags:["Mastermind", "Hidden code"] },
+      { actor:"Party", title:"First attempt", instruction:"Place P1, P2, P3, and P4 on Crown through Flame; put P5, P6, and P7 on the witness circles. Knock once. The mirror gives 0 black and 3 white shards.", tags:["0 exact", "3 present"], patch:{ pieces:{pc1:{x:4,y:3},pc2:{x:5,y:3},pc3:{x:6,y:3},pc4:{x:7,y:3},pc5:{x:4,y:5},pc6:{x:5.5,y:5},pc7:{x:7,y:5}}, counters:{misplaced:3} } },
+      { actor:"Party", title:"Second attempt", instruction:"Try P4, P3, P2, P1. The mirror gives 1 black and 2 white shards: one station is exact, and two other chosen PCs belong elsewhere in the code.", tags:["1 exact", "2 misplaced"], patch:{ pieces:{pc4:{x:4,y:3},pc3:{x:5,y:3},pc2:{x:6,y:3},pc1:{x:7,y:3},pc5:{x:4,y:5},pc6:{x:5.5,y:5},pc7:{x:7,y:5}}, counters:{exact:1,misplaced:2} } },
+      { actor:"Party", title:"Third attempt", instruction:"Try P4, P1, P5, P2. The mirror gives 3 black and 0 white. P4, P1, and P2 are fixed; P5 is not the missing third-station PC.", tags:["3 exact", "Eliminate P5"], patch:{ pieces:{pc4:{x:4,y:3},pc1:{x:5,y:3},pc5:{x:6,y:3},pc2:{x:7,y:3},pc3:{x:4,y:5},pc6:{x:5.5,y:5},pc7:{x:7,y:5}}, counters:{exact:3,misplaced:0} } },
+      { actor:"Party", title:"Final attempt", instruction:"Only P6 and P7 can fill the Key station. Test P6 with P4, P1, P6, P2. Four black shards confirm the code; three would identify P7 instead.", tags:["Binary test", "4 exact"], patch:{ pieces:{pc4:{x:4,y:3},pc1:{x:5,y:3},pc6:{x:6,y:3},pc2:{x:7,y:3},pc3:{x:4,y:5},pc5:{x:5.5,y:5},pc7:{x:7,y:5}}, counters:{exact:4,misplaced:0} } },
       { actor:"The Honest Mirror", title:"The road moves around them", instruction:"All reflections turn together. Without crossing the glass or taking a step, the party and the room shift into the Gloamglass. Replace this map with The First Visit.", tags:["Automatic transition", "No mirror crossing"], patch:{ features:{shift:{hidden:false},hm:{hidden:true},prompt:{hidden:true}} } }
     ]
   },
