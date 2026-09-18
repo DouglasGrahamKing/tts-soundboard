@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hall of Mirrors: Six Map Layouts</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">CT-VAL-HOM-01</p>
+      <h1>Hall of Mirrors: Six Maps</h1>
+    </div>
+    <div class="top-actions">
+      <label class="switch"><input id="gmOverlay" type="checkbox" checked><span>GM overlays</span></label>
+      <button id="resetScene" type="button">Reset scene</button>
+    </div>
+  </header>
+
+  <nav id="sceneTabs" class="scene-tabs" aria-label="Puzzle scenes"></nav>
+
+  <main class="workspace">
+    <aside class="rules-panel" aria-label="Rules for current room">
+      <p class="eyebrow">Room rules</p>
+      <h2 id="rulesTitle">Rules</h2>
+      <section class="rule-block goal-block">
+        <h3>Goal</h3>
+        <p id="ruleGoal"></p>
+      </section>
+      <section class="rule-block">
+        <h3>Setup</h3>
+        <ul id="ruleSetup"></ul>
+      </section>
+      <section class="rule-block">
+        <h3>Player actions</h3>
+        <ul id="ruleActions"></ul>
+      </section>
+      <section class="rule-block solve-block">
+        <h3>Solve</h3>
+        <ul id="ruleSolve"></ul>
+      </section>
+      <section class="rule-block cost-block">
+        <h3>Failure or cost</h3>
+        <p id="ruleFailure"></p>
+      </section>
+    </aside>
+
+    <section class="table-panel" aria-label="Tabletop board">
+      <div class="board-header">
+        <div>
+          <p id="sceneKind" class="eyebrow"></p>
+          <h2 id="sceneTitle"></h2>
+        </div>
+        <div id="sceneCounters" class="counter-rack"></div>
+      </div>
+      <div id="boardFrame" class="board-frame">
+        <div id="board" class="board" aria-label="Square grid board"></div>
+      </div>
+      <div class="board-footer">
+        <span>Drag any round piece to a square.</span>
+        <span>Coordinates match the grid labels.</span>
+      </div>
+    </section>
+
+    <aside class="control-panel">
+      <section class="playthrough-panel">
+        <p class="eyebrow">Example playthrough</p>
+        <div class="step-heading">
+          <strong id="stepNumber"></strong>
+          <span id="stepActor" class="actor-chip"></span>
+        </div>
+        <h3 id="stepTitle"></h3>
+        <p id="stepInstruction"></p>
+        <div id="mechanicTags" class="mechanic-tags"></div>
+        <div class="step-controls">
+          <button id="previousStep" type="button">Previous</button>
+          <button id="nextStep" class="primary" type="button">Next</button>
+        </div>
+      </section>
+
+      <section class="piece-panel">
+        <p class="eyebrow">Selected piece</p>
+        <div id="pieceInspector" class="piece-inspector">Select a piece on the board.</div>
+      </section>
+
+      <details class="manifest-panel" open>
+        <summary>Components for this scene</summary>
+        <ul id="componentManifest"></ul>
+      </details>
+
+      <details class="kit-panel">
+        <summary>Minimum reusable TTS kit</summary>
+        <ul>
+          <li>1 reversible board: 12 x 7 wagon / 14 x 10 Gloamglass</li>
+          <li>20 mirror tiles: 1 x 1 square</li>
+          <li>1 answering mirror/portal: 2 x 4 squares</li>
+          <li>Monoliths: one 2 x 5 and two 3 x 5 tiles</li>
+          <li>7 PC minis on 0.8-square round bases</li>
+          <li>Pavel and Unreflected on 0.8-square bases</li>
+          <li>Lantern Wraith on a 1-square round base</li>
+          <li>4 light pieces, including one mundane lantern</li>
+          <li>3 fear flames: red, blue, and white</li>
+          <li>4 knock counters</li>
+          <li>21 Fear Bruise counters in an infinite bag</li>
+          <li>1 four-step clock and 1 round marker</li>
+          <li>1 each: Warning, Bond, Empty Place, Victory, Boundary, Truth</li>
+        </ul>
+      </details>
+
+      <details class="legend-panel">
+        <summary>Piece legend</summary>
+        <div class="legend-grid">
+          <span><i class="legend-dot pc"></i>PC miniature</span>
+          <span><i class="legend-dot npc"></i>NPC miniature</span>
+          <span><i class="legend-dot enemy"></i>Enemy miniature</span>
+          <span><i class="legend-dot object"></i>Object token</span>
+          <span><i class="legend-square mirror"></i>Mirror tile</span>
+          <span><i class="legend-square zone"></i>Objective zone</span>
+        </div>
+      </details>
+    </aside>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
