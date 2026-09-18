@@ -144,34 +144,34 @@ const scenes = [
     cols: 10,
     rows: 7,
     rules: {
-      goal: "Place all seven PCs where the Honest Mirror shows them already standing.",
-      setup: ["Place the sealed Honest Mirror on the east wall.", "Arrange seven numbered reflection marks on the floor to match the formation shown in the glass.", "Begin every PC west of the marked formation."],
-      actions: ["Inspect the mirror to see the party's completed formation.", "Move a PC onto the floor mark bearing that character's number.", "Reposition freely until every reflected figure aligns with its real counterpart."],
-      solve: ["Match P1 through P7 to the seven numbered floor marks.", "Each correct placement lights its mark and makes that reflection move in time.", "When all seven marks are occupied, the room automatically shifts the entire party into the Gloamglass."],
-      failure: "There is no damage or forced confession. An incorrect placement stays dark, and its reflection points toward the correct empty mark."
+      goal: "Deduce which PC belongs on each of the seven symbol-marked stations.",
+      setup: ["Place seven unlabeled stations in a three-two-two forked formation.", "Keep each PC's existing base color visible: blue, red, green, ochre, violet, teal, and rose.", "Show the five relational clues in the Honest Mirror; do not show the solved formation."],
+      actions: ["Read the reflection clues and compare rows, columns, and adjacency.", "Move PCs among the seven stations to test an arrangement.", "When the party asks to test a solution, check all seven placements together."],
+      solve: ["Red occupies the only station between two others: blue on its left and green on its right.", "Ochre stands directly below blue; violet stands directly below green.", "Teal shares blue's column but is not adjacent to blue; rose shares green's column but is not adjacent to green.", "When all seven deductions are satisfied, the room automatically shifts the entire party into the Gloamglass."],
+      failure: "An incorrect arrangement makes every station go dark. The mirror reveals which clue is violated, but never identifies a character's destination."
     },
-    manifest: ["10 x 7 square floor mat", "1 two-square Honest Mirror", "7 PC miniatures", "7 numbered reflection marks", "1 inscription strip", "1 Gloamglass overlay"],
+    manifest: ["10 x 7 square floor mat", "1 two-square Honest Mirror", "7 PC miniatures with colored bases", "7 symbol-marked stations", "5 reflection clue strips", "1 Gloamglass overlay"],
     features: [
       { id:"hm", type:"mirror", x:8, y:2, w:2, h:4, label:"HONEST MIRROR" },
-      { id:"prompt", type:"zone", x:3, y:1, w:5, h:1, label:"STAND WHERE YOU ALREADY WAIT. WHEN NONE REMAINS APART, THE ROAD WILL MOVE." },
-      { id:"place1", type:"rune", x:4, y:2, w:1, h:1, label:"P1" },
-      { id:"place2", type:"rune", x:5, y:2, w:1, h:1, label:"P2" },
-      { id:"place3", type:"rune", x:6, y:2, w:1, h:1, label:"P3" },
-      { id:"place4", type:"rune", x:4, y:4, w:1, h:1, label:"P4" },
-      { id:"place5", type:"rune", x:6, y:4, w:1, h:1, label:"P5" },
-      { id:"place6", type:"rune", x:4, y:6, w:1, h:1, label:"P6" },
-      { id:"place7", type:"rune", x:6, y:6, w:1, h:1, label:"P7" },
+      { id:"prompt", type:"zone", x:3, y:1, w:5, h:1, label:"SET THE SEVEN TRUE. THE ROAD WILL MOVE." },
+      { id:"crown", type:"rune", x:4, y:2, w:1, h:1, label:"CROWN" },
+      { id:"eye", type:"rune", x:5, y:2, w:1, h:1, label:"EYE" },
+      { id:"key", type:"rune", x:6, y:2, w:1, h:1, label:"KEY" },
+      { id:"flame", type:"rune", x:4, y:4, w:1, h:1, label:"FLAME" },
+      { id:"bell", type:"rune", x:6, y:4, w:1, h:1, label:"BELL" },
+      { id:"moon", type:"rune", x:4, y:6, w:1, h:1, label:"MOON" },
+      { id:"thorn", type:"rune", x:6, y:6, w:1, h:1, label:"THORN" },
       { id:"shift", type:"portal", x:1, y:1, w:10, h:7, label:"THE WHOLE ROOM SHIFTS INTO THE GLOAMGLASS", hidden:true }
     ],
     pieces: [
       ...pcPieces([[2,2],[2,3],[2,4],[2,5],[2,6],[3,3],[3,5]])
     ],
-    counters: [{ id:"placements", label:"Places filled", max:7, value:0 }],
+    counters: [{ id:"clues", label:"Clues satisfied", max:5, value:0 }],
     steps: [
-      { actor:"GM setup", title:"The mirror shows the ending first", instruction:"The glass reflects all seven PCs standing in a precise formation. Matching numbered marks glimmer on the floor beneath the reflected figures.", tags:["Visible prompt", "Placement puzzle"] },
-      { actor:"Mirror inscription", title:"The instruction appears", instruction:"Read: 'Stand where you already wait. When none remains apart, the road will move.' A misplaced PC's reflection silently points to the correct empty mark.", tags:["No roll", "Self-correcting clue"] },
-      { actor:"Party", title:"Fill the first positions", instruction:"Move P1, P2, and P3 onto their matching marks. Each mark lights and that PC's reflection begins moving normally.", tags:["3 of 7 placed"], patch:{ pieces:{pc1:{x:4,y:2},pc2:{x:5,y:2},pc3:{x:6,y:2}}, counters:{placements:3} } },
-      { actor:"Party", title:"Complete the formation", instruction:"Move P4 through P7 onto their matching marks. The seventh mark lights; no door opens and the mirror remains solid.", tags:["7 of 7 placed", "Puzzle solved"], patch:{ pieces:{pc4:{x:4,y:4},pc5:{x:6,y:4},pc6:{x:4,y:6},pc7:{x:6,y:6}}, counters:{placements:7} } },
+      { actor:"GM setup", title:"Seven stations, no destinations", instruction:"The floor bears Crown, Eye, Key, Flame, Bell, Moon, and Thorn. The mirror shows seven blurred colored figures, but none stands clearly over a symbol.", tags:["Placement logic", "Answer concealed"] },
+      { actor:"Honest Mirror", title:"Five clues appear", instruction:"Read: 'Red stands between blue to the west and green to the east. Ochre is directly below blue. Violet is directly below green. Teal shares blue's column but not blue's edge. Rose shares green's column but not green's edge.'", tags:["Relational clues", "Unique solution"] },
+      { actor:"Party", title:"Deduce the upper row", instruction:"Only the top row has three consecutive stations, so blue, red, and green must occupy Crown, Eye, and Key in that order.", tags:["Clue 1"], patch:{ pieces:{pc1:{x:4,y:2},pc2:{x:5,y:2},pc3:{x:6,y:2}}, counters:{clues:1} } },
+      { actor:"Party", title:"Complete the two columns", instruction:"Ochre and violet take Flame and Bell directly below blue and green. Teal and rose then take Moon and Thorn, sharing those columns without touching the upper PCs.", tags:["Clues 2-5", "Puzzle solved"], patch:{ pieces:{pc4:{x:4,y:4},pc5:{x:6,y:4},pc6:{x:4,y:6},pc7:{x:6,y:6}}, counters:{clues:5} } },
       { actor:"The Honest Mirror", title:"The road moves around them", instruction:"All reflections turn together. Without crossing the glass or taking a step, the party and the room shift into the Gloamglass. Replace this map with The First Visit.", tags:["Automatic transition", "No mirror crossing"], patch:{ features:{shift:{hidden:false},hm:{hidden:true},prompt:{hidden:true}} } }
     ]
   },
