@@ -1,5 +1,5 @@
-const PORTRAITS = "../../../../Cards/Baseball/images/portraits/";
-const USE_PORTRAITS = false;
+const PORTRAITS = "portraits/";
+const USE_PORTRAITS = true;
 
 const party = [
   { id: "pc1", name: "PC 1", initials: "P1", type: "pc", color: "#496f83" },
@@ -181,110 +181,132 @@ const scenes = [
   },
   {
     id: "pain",
-    tab: "4. First Visit",
-    kind: "Gloamglass memory",
-    title: "The First Visit",
+    tab: "4. Razor Waste",
+    kind: "Gloamglass traversal encounter",
+    title: "The Razor Waste",
     boardClass: "gloam",
-    cols: 12,
-    rows: 8,
+    cols: 14,
+    rows: 10,
     rules: {
-      goal: "Witness why Pavel trusted the Lantern Wraith and what it first took from him.",
-      setup: ["Place Pavel with a cut palm inside the memory.", "Place the Lantern Wraith in the mirror and the red flame between them.", "Keep the colored trail and exit hidden."],
-      actions: ["Listen to the memory.", "Walk among its figures or touch one to feel its emotion.", "Inspect the cut, lantern, or hot glass for extra detail."],
-      solve: ["No answer is required: let the memory play.", "See the Wraith take Pavel's fear of pain, then watch him fail to withdraw from hot glass.", "Reveal the red trail to the next memory."],
-      failure: "The party cannot fail this scene. Attacking or dispelling the echo advances the Unreflected clock, but the red trail still appears."
+      goal: "Follow Pavel's burned, bloodied trail across the Waste without surrendering Pain to the Fearless.",
+      setup: ["Place the party at ENTRY and two Fearless beyond the central vent.", "Lay the fissure, fire vent, razor field, and Pavel trail tiles as shown.", "Keep one red discarded-Pain token beside the board for each PC."],
+      actions: ["Cross a marked hazard with DC 14 Athletics, Acrobatics, or a credible tool or spell.", "On failure, suffer the hazard and remain on the near edge, or shed Pain and complete the crossing.", "Recover your adjacent Pain with an action before a Fearless reaches it."],
+      solve: ["Move all PCs through the EXIT arch.", "Fearless move 4 squares toward the nearest discarded fear at initiative 20 and consume it when adjacent.", "Pavel's trail reveals that he still felt every wound but no longer understood pain as a reason to stop."],
+      failure: "Normal failure costs: fissure 3d6 slashing and return to the near edge; vent 3d8 fire; razor field 4d6 slashing and stop on its first square. Shedding Pain avoids that cost but leaves the owner's red token behind. A Fearless that consumes it heals, gains a burning touch, and carries the fear until defeated or restrained for extraction."
     },
-    manifest: ["12 x 8 dark-glass mat", "7 PC miniatures", "Pavel miniature", "Lantern Wraith miniature", "1 red fear flame", "1 hot-glass tile", "1 red trail strip", "4-step Unreflected clock"],
+    manifest: ["14 x 10 black-glass grid", "7 PC miniatures", "2 Fearless miniatures", "1 fissure strip: 1 x 8", "1 fire vent: 2 x 2", "1 razor field: 2 x 7", "6 bloody footprint markers", "7 owner-marked red Pain tokens", "1 exit arch", "3 Missing Fear markers per PC"],
     features: [
-      {id:"entry",type:"portal",x:1,y:3,w:1,h:3,label:"ENTRY"},
-      {id:"memory",type:"zone",x:5,y:2,w:4,h:5,label:"PAVEL'S FIRST VISIT"},
-      {id:"burn",type:"zone",x:10,y:3,w:2,h:3,label:"DANGEROUSLY\nHOT GLASS"},
-      {id:"exit",type:"portal",x:12,y:3,w:1,h:3,label:"NEXT" ,hidden:true}
+      {id:"entry",type:"portal",x:1,y:4,w:1,h:3,label:"ENTRY"},
+      {id:"fissure",type:"void",x:4,y:2,w:1,h:7,label:"BLACK FISSURE\nDC 14"},
+      {id:"vent",type:"hazard",x:7,y:4,w:2,h:2,label:"FIRE VENT\nDC 14"},
+      {id:"razors",type:"hazard",x:10,y:2,w:2,h:7,label:"RAZOR GLASS\nDC 14"},
+      {id:"trail1",type:"path",x:2,y:5,w:2,h:1,label:"BLOODY PRINTS"},
+      {id:"trail2",type:"path",x:5,y:4,w:2,h:1,label:"BURNED PRINTS"},
+      {id:"trail3",type:"path",x:8,y:6,w:2,h:1,label:"NO DETOUR"},
+      {id:"exit",type:"portal",x:14,y:4,w:1,h:3,label:"TO THE GALLERY"}
     ],
     pieces: [
-      ...pcPieces([[2,3],[2,4],[2,5],[3,3],[3,4],[3,5],[4,4]]),
-      {id:"pavel",name:"Memory of Pavel",initials:"P",type:"npc",image:`${PORTRAITS}PavelRilsky.png`,x:6,y:4,note:"He is frightened, hurt, and receptive to the Wraith's apparent kindness."},
-      {id:"wraith",name:"Memory of the Lantern Wraith",initials:"LW",type:"enemy",image:`${PORTRAITS}LanternWraith.png`,x:8,y:4,note:"It offers removal as mercy and never raises its voice."},
-      {id:"red",name:"Fear of Pain",initials:"R",type:"object",x:7,y:4,visible:false,color:"#bd3c35",glow:"#f05249",note:"The first fear harvested from Pavel."}
+      ...pcPieces([[2,4],[2,5],[2,6],[3,3],[3,4],[3,6],[3,7]]),
+      {id:"fearless1",name:"Fearless Wanderer",initials:"F1",type:"enemy",image:`${PORTRAITS}FearlessBefore.png`,x:8,y:2,note:"Moves toward discarded fear before attacking anyone."},
+      {id:"fearless2",name:"Fearless Wanderer",initials:"F2",type:"enemy",image:`${PORTRAITS}FearlessBefore.png`,x:11,y:9,note:"Walks through razor glass without protecting herself."},
+      {id:"red",name:"PC 2's Discarded Pain",initials:"R",type:"object",image:`${PORTRAITS}DiscardedFearPain.png`,x:7,y:5,visible:false,color:"#bd3c35",glow:"#f05249",note:"Small, frightened, alive, and still owned by the character who shed it."}
     ],
-    counters:[{id:"clock",label:"Unreflected",max:4,value:0}],
+    counters:[{id:"across",label:"PCs across",max:7,value:0},{id:"missing",label:"Fears missing",max:3,value:0},{id:"clock",label:"Unreflected",max:4,value:0}],
     steps:[
-      {actor:"GM",title:"A memory waits in the dunes",instruction:"Pavel hides a bleeding palm while the Wraith watches from the mirror. The figures do not acknowledge the party.",tags:["Story scene","No puzzle"]},
-      {actor:"Memory",title:"The offer",instruction:"The Wraith says, 'Pain has frightened you long enough. Give me the fear before it can hurt you again.' Pavel agrees; place the red flame between them.",tags:["Apparent mercy"],patch:{pieces:{red:{visible:true}}}},
-      {actor:"Memory",title:"The consequence",instruction:"Move Pavel to the hot glass. He presses his injured hand against it and does not withdraw as it blisters. The Wraith removed his warning, not his pain.",tags:["Finale clue: red"],patch:{pieces:{pavel:{x:10,y:4},red:{x:9,y:3}}}},
-      {actor:"GM",title:"Follow the red trail",instruction:"The memory breaks into red light leading onward. Reveal the next passage; no answer or roll is required.",tags:["Memory complete"],patch:{features:{exit:{hidden:false}}}}
+      {actor:"GM setup",title:"Pavel crossed without turning",instruction:"The trail passes straight through every hazard. Read the wounds in order: cut feet, burned palms, then deeper cuts. Nothing suggests he stopped or chose safer ground.",tags:["Physical evidence","Pain clue"]},
+      {actor:"PC 2",title:"The vent catches a character",instruction:"PC 2 fails the fire-vent check and chooses the Gloamglass's rescue. Move PC 2 across the vent, reveal their red Pain at the failed square, and mark one fear missing.",tags:["Shed Pain","Hazard succeeds"],patch:{pieces:{pc2:{x:9,y:5},red:{visible:true}},counters:{missing:1,clock:1}}},
+      {actor:"Initiative 20",title:"The Fearless smells warning",instruction:"Move F1 four squares toward the red token. Its calm face breaks into hunger; it ignores every PC not carrying discarded fear.",tags:["Predator priority","Four-square move"],patch:{pieces:{fearless1:{x:8,y:4}}}},
+      {actor:"PC 3",title:"Recover the warning",instruction:"PC 3 crosses normally, reaches the red token first, and spends an action returning it to PC 2. Hide the token and clear Missing Pain; pain and panic strike PC 2 at once.",tags:["Fear recovered","Owner restored"],patch:{pieces:{pc3:{x:8,y:5},red:{visible:false}},counters:{missing:0}}},
+      {actor:"Party",title:"Reach the far arch",instruction:"Move all seven PCs through the exit. The Fearless do not pursue beyond the arch. The last footprint points toward mirrors full of people calling Pavel's name.",tags:["7 PCs across","Level complete"],patch:{pieces:{pc1:{x:13,y:3},pc2:{x:13,y:4},pc3:{x:13,y:5},pc4:{x:13,y:6},pc5:{x:12,y:3},pc6:{x:12,y:5},pc7:{x:12,y:7}},counters:{across:7}}}
     ]
   },
   {
     id: "loss",
-    tab: "5. The Return",
-    kind: "Gloamglass memory",
-    title: "The Return",
+    tab: "5. Severed Bonds",
+    kind: "Gloamglass rescue encounter",
+    title: "The Gallery of Severed Bonds",
     boardClass: "gloam",
-    cols: 12,
-    rows: 8,
+    cols: 14,
+    rows: 10,
     rules: {
-      goal: "Witness how the Wraith used Pavel's love for Ilona to bring him back.",
-      setup: ["Place Ilona and Pavel at the wagon door.", "Place the Wraith and blue flame beyond the door.", "Keep the colored trail and exit hidden."],
-      actions: ["Listen to Ilona and Pavel.", "Touch either echo to feel fear, love, guilt, or resolve.", "Inspect the door and hear Pavel's three knocks."],
-      solve: ["No answer is required: let the memory play.", "Watch Pavel break his promise and surrender his fear of losing Ilona.", "Reveal the blue trail to the final memory."],
-      failure: "The party cannot fail this scene. Attacking or dispelling the echo advances the Unreflected clock, but the blue trail still appears."
+      goal: "Free Ilona's living reflection and carry her mirror shard out of the gallery.",
+      setup: ["Build four mirror islands over the bottomless glass and connect them with three cracked bridges.", "Place Ilona's reflection in the far frame, three other captives in side frames, and one Fearless on the central island.", "Place the Unreflected beneath the middle bridge and keep the blue Loss token ready."],
+      actions: ["Cross a cracked bridge with DC 14 Acrobatics, Athletics, or a securing tool or spell.", "Free a captive reflection with an adjacent action; Ilona's frame becomes a carried shard.", "On a failed crossing, fall back and take 3d6 damage, or shed Loss and arrive safely."],
+      solve: ["Free Ilona's reflection and bring her shard through the EXIT.", "Ilona reports that Pavel saw her calling and walked past without recognizing the danger of losing her.", "Keep Ilona's shard: it makes Pavel's blue fear recognize him in the finale."],
+      failure: "Shed Loss leaves a blue token on the bridge and makes its owner indifferent to separated allies. A Fearless that consumes it can step between mirror frames and will seize Ilona's shard."
     },
-    manifest: ["12 x 8 dark-glass mat", "7 PC miniatures", "Pavel miniature", "Ilona miniature", "Lantern Wraith miniature", "1 blue fear flame", "1 wagon-door tile", "1 blue trail strip", "4-step Unreflected clock"],
+    manifest: ["14 x 10 black-glass grid", "4 mirror-island tiles", "3 cracked bridge tiles", "4 freestanding captive mirrors", "7 PC miniatures", "1 Fearless miniature", "1 Unreflected silhouette", "1 removable Ilona reflection shard", "7 owner-marked blue Loss tokens", "1 exit arch"],
     features: [
-      {id:"door",type:"monolith",x:5,y:2,w:2,h:5,label:"WAGON\nDOOR"},
-      {id:"memory",type:"zone",x:8,y:2,w:3,h:5,label:"INSIDE THE HALL"},
-      {id:"exit",type:"portal",x:12,y:3,w:1,h:3,label:"NEXT",hidden:true}
+      {id:"void",type:"void",x:1,y:1,w:14,h:10,label:"BOTTOMLESS REFLECTION"},
+      {id:"island1",type:"island",x:1,y:3,w:3,h:5,label:"ENTRY ISLAND"},
+      {id:"bridge1",type:"bridge",x:4,y:4,w:2,h:1,label:"CRACKED"},
+      {id:"island2",type:"island",x:6,y:2,w:3,h:4,label:"CENTRAL MIRRORS"},
+      {id:"bridge2",type:"bridge",x:8,y:6,w:2,h:1,label:"CRACKED"},
+      {id:"island3",type:"island",x:10,y:5,w:3,h:4,label:"ILONA'S FRAME"},
+      {id:"bridge3",type:"bridge",x:12,y:4,w:2,h:1,label:"CRACKED"},
+      {id:"island4",type:"island",x:13,y:2,w:2,h:3,label:"EXIT"},
+      {id:"exit",type:"portal",x:14,y:2,w:1,h:3,label:"TO LANTERN ROAD"}
     ],
     pieces:[
-      ...pcPieces([[2,2],[2,3],[2,4],[2,5],[3,3],[3,4],[3,5]]),
-      {id:"ilona",name:"Memory of Ilona",initials:"I",type:"npc",image:`${PORTRAITS}IlonaRilsky.png`,x:4,y:4,note:"She begs Pavel not to enter the wagon again."},
-      {id:"pavel",name:"Memory of Pavel",initials:"P",type:"npc",image:`${PORTRAITS}PavelRilsky.png`,x:5,y:4,note:"He promises to stay away, then returns after Ilona leaves."},
-      {id:"wraith",name:"Memory of the Lantern Wraith",initials:"LW",type:"enemy",image:`${PORTRAITS}LanternWraith.png`,x:10,y:4,note:"It turns Pavel's fear of abandonment into a reason to surrender attachment."},
-      {id:"blue",name:"Fear of Loss",initials:"B",type:"object",x:9,y:4,visible:false,color:"#397fc0",glow:"#5ba7ec",note:"The second fear harvested from Pavel."}
+      ...pcPieces([[2,3],[2,4],[2,5],[2,6],[3,3],[3,5],[3,7]]),
+      {id:"captive1",name:"Captive Reflection",initials:"CR",type:"reflection",image:`${PORTRAITS}CaptiveReflections.png`,x:7,y:2,note:"Its living owner lies catatonic somewhere in Barovia."},
+      {id:"captive2",name:"Captive Reflection",initials:"CR",type:"reflection",image:`${PORTRAITS}CaptiveReflections.png`,x:8,y:4,note:"It silently mouths a distant owner's name."},
+      {id:"captive3",name:"Captive Reflection",initials:"CR",type:"reflection",image:`${PORTRAITS}CaptiveReflections.png`,x:11,y:8,note:"Its frame shows a different Barovian home behind it."},
+      {id:"ilona",name:"Ilona's Captive Reflection",initials:"I",type:"npc",image:`${PORTRAITS}CaptiveReflections.png`,x:11,y:6,note:"She saw Pavel pass and can still call his blue fear home."},
+      {id:"fearless1",name:"Fearless Collector",initials:"F",type:"enemy",image:`${PORTRAITS}FearlessBefore.png`,x:7,y:5,note:"If fed Loss, it can step from one mirror frame to another."},
+      {id:"unreflected",name:"The Unreflected Below",initials:"U",type:"enemy",image:`${PORTRAITS}UnreflectedMirror.png`,x:9,y:7,note:"It exists only beneath the glass and advances when fear is lost."},
+      {id:"blue",name:"PC 5's Discarded Loss",initials:"B",type:"object",image:`${PORTRAITS}DiscardedFearLoss.png`,x:9,y:6,visible:false,color:"#397fc0",glow:"#5ba7ec",note:"Two cold hands almost touching; it crawls after its owner."}
     ],
-    counters:[{id:"clock",label:"Unreflected",max:4,value:0}],
+    counters:[{id:"captives",label:"Captives freed",max:4,value:0},{id:"ilonaSafe",label:"Ilona secured",max:1,value:0},{id:"clock",label:"Unreflected",max:4,value:1}],
     steps:[
-      {actor:"GM",title:"Ilona catches Pavel returning",instruction:"Ilona grips Pavel's shoulders and begs him not to enter again. He promises her he will not.",tags:["Story scene","No puzzle"]},
-      {actor:"Memory",title:"Three knocks after dark",instruction:"Move Ilona away. Pavel waits, then knocks three times and enters. The Wraith shows him an image of Ilona leaving forever.",tags:["Promise broken"],patch:{pieces:{ilona:{x:2,y:7},pavel:{x:8,y:4}}}},
-      {actor:"Memory",title:"The second offer",instruction:"The Wraith says, 'No one can abandon you if their absence means nothing.' Pavel agrees; reveal the blue flame as Ilona's image calls his name.",tags:["Finale clue: blue"],patch:{pieces:{blue:{visible:true}}}},
-      {actor:"GM",title:"Follow the blue trail",instruction:"Pavel watches Ilona's reflection vanish without reaching for her. Blue light leads to the last memory; no answer or roll is required.",tags:["Memory complete"],patch:{features:{exit:{hidden:false}}}}
+      {actor:"Ilona's reflection",title:"She recognizes the rescuers",instruction:"From the far frame Ilona calls Pavel's name. She says he looked directly at her, heard her, and continued after the Wraith without reaching back.",tags:["Live witness","Loss clue"]},
+      {actor:"PC 5",title:"The bridge gives way",instruction:"PC 5 fails the middle bridge check and sheds Loss. Move them safely to Ilona's island, reveal their blue token on the bridge, and advance the Unreflected.",tags:["Shed Loss","Separated without concern"],patch:{pieces:{pc5:{x:10,y:6},blue:{visible:true}},counters:{clock:2}}},
+      {actor:"Initiative 20",title:"Loss teaches the Fearless to step",instruction:"The Fearless reaches and consumes the blue token. Replace it with the Loss-fed state; it can now move between any two captive mirrors as four squares of movement.",tags:["Blue consumed","Mirror-step"],patch:{pieces:{blue:{visible:false},fearless1:{x:8,y:4,name:"Loss-Fed Fearless",initials:"FL",image:`${PORTRAITS}FearlessLoss.png`,state:"fed-loss"}},counters:{clock:3}}},
+      {actor:"Party",title:"Free Ilona's shard",instruction:"Two PCs hold off the Fearless while PC 5 uses an action to lift Ilona's reflection from its frame. Her token now represents a carried mirror shard.",tags:["Objective secured","Finale key"],patch:{pieces:{ilona:{x:10,y:6,state:"freed"}},counters:{captives:1,ilonaSafe:1}}},
+      {actor:"Party",title:"Carry the bond forward",instruction:"Move Ilona's shard and the party through the exit. Her voice continues from the carried glass: 'He did not stop because losing me no longer frightened him.'",tags:["Ilona secured","Level complete"],patch:{pieces:{ilona:{x:14,y:3},pc1:{x:13,y:2},pc2:{x:13,y:3},pc3:{x:13,y:4},pc4:{x:14,y:2},pc5:{x:14,y:4},pc6:{x:12,y:3},pc7:{x:12,y:4}}}}
     ]
   },
   {
     id: "shame",
-    tab: "6. Final Visit",
-    kind: "Gloamglass memory",
-    title: "The Cure",
+    tab: "6. Lantern Road",
+    kind: "Gloamglass pursuit encounter",
+    title: "The Lantern Road",
     boardClass: "gloam",
-    cols: 12,
-    rows: 8,
+    cols: 14,
+    rows: 10,
     rules: {
-      goal: "Witness Pavel's final bargain and learn why the Unreflected needs him emptied of fear.",
-      setup: ["Place Pavel before the open lantern.", "Place the Wraith opposite him and the Unreflected behind his reflection.", "Keep the white flame and Hall entrance hidden."],
-      actions: ["Listen to Pavel confess why he returned.", "Watch the Unreflected anticipate his movements.", "Inspect the lantern or touch Pavel's echo for extra detail."],
-      solve: ["No answer is required: let the memory play.", "Watch the Wraith remove Pavel's fear of wrongdoing.", "See the Unreflected align with his emptied reflection and reveal the Hall."],
-      failure: "The party cannot fail this scene. Attacking or dispelling the echo advances the Unreflected clock, but the way to Pavel still opens."
+      goal: "Catch the Lantern Wraith and Pavel without buying speed through deliberate harm.",
+      setup: ["Place Pavel and the Wraith ahead beside the Hall portal; set Pursuit Delay to 0.", "Build three road stations: the trapped wanderer, the captive mirror, and the counterweight victim.", "Place one Fearless behind the party and keep white Conscience tokens ready."],
+      actions: ["At each station, take the compassionate route with an action and DC 14 ability check, tool, or spell.", "Alternatively, use the printed cruel shortcut automatically without adding Pursuit Delay.", "After a failed compassionate attempt, add one Pursuit Delay and retry, or shed Conscience to succeed immediately."],
+      solve: ["Clear all three stations and reach the Hall portal.", "At 0-2 Pursuit Delay, begin the finale at Open Door 0; at 3, begin at Open Door 1.", "Pavel reaches the apparatus alive either way: delay changes the rescue position, not access to the finale."],
+      failure: "Shed Conscience leaves a white token and makes its owner treat harmful shortcuts as ordinary. A Fearless that consumes it becomes calculating, operates road mechanisms, and coordinates the others."
     },
-    manifest: ["12 x 8 dark-glass mat", "7 PC miniatures", "Pavel miniature", "Lantern Wraith miniature", "Unreflected silhouette", "1 lantern object", "1 white fear flame", "3 colored trail strips", "4-step Unreflected clock"],
+    manifest: ["14 x 10 black-glass grid", "7 PC miniatures", "Pavel miniature", "Lantern Wraith miniature", "1 Fearless miniature", "1 Unreflected silhouette", "3 road-station tiles", "1 trapped wanderer", "1 captive reflection", "1 counterweight victim", "7 owner-marked white Conscience tokens", "3 Pursuit Delay counters", "1 Hall portal"],
     features:[
-      {id:"memory",type:"zone",x:5,y:2,w:5,h:5,label:"PAVEL'S FINAL VISIT"},
-      {id:"exit",type:"portal",x:12,y:3,w:1,h:3,label:"HALL",hidden:true}
+      {id:"road",type:"road",x:1,y:4,w:13,h:3,label:"LANTERN ROAD"},
+      {id:"station1",type:"choice",x:4,y:2,w:2,h:6,label:"FREE WANDERER\nOR ABANDON THEM"},
+      {id:"station2",type:"choice",x:7,y:2,w:2,h:6,label:"RELEASE MIRROR\nOR SHATTER IT"},
+      {id:"station3",type:"choice",x:10,y:2,w:2,h:6,label:"LIFT VICTIM\nOR DROP THEM"},
+      {id:"exit",type:"portal",x:14,y:4,w:1,h:3,label:"HALL OF\nUNMADE SCREAMS"}
     ],
     pieces:[
-      ...pcPieces([[2,2],[2,3],[2,4],[2,5],[3,3],[3,4],[3,5]]),
-      {id:"pavel",name:"Memory of Pavel",initials:"P",type:"npc",image:`${PORTRAITS}PavelRilsky.png`,x:6,y:4,note:"He wants relief and no longer understands what each removal has cost him."},
-      {id:"lantern",name:"Open Wraith Lantern",initials:"L",type:"light",x:8,y:4,note:"Red and blue already burn inside it."},
-      {id:"wraith",name:"Memory of the Lantern Wraith",initials:"LW",type:"enemy",image:`${PORTRAITS}LanternWraith.png`,x:9,y:4,note:"It sincerely mistakes emotional removal for mercy."},
-      {id:"unreflected",name:"The Unreflected",initials:"U",type:"enemy",image:`${PORTRAITS}TheUnreflected.png`,x:6,y:6,note:"It moves before Pavel until the final fear is removed, then aligns perfectly."},
-      {id:"white",name:"Fear of Wrongdoing",initials:"W",type:"object",x:7,y:4,visible:false,color:"#d9d3c4",glow:"#fffbe8",note:"The final fear harvested from Pavel."}
+      ...pcPieces([[2,3],[2,4],[2,5],[2,6],[3,3],[3,5],[3,7]]),
+      {id:"wanderer",name:"Trapped Wanderer",initials:"V1",type:"npc",x:5,y:6,note:"Freeing them preserves the road; abandoning them lowers the first bridge immediately."},
+      {id:"captive",name:"Captive Reflection",initials:"V2",type:"reflection",image:`${PORTRAITS}CaptiveReflections.png`,x:8,y:3,note:"Opening its frame takes time; shattering it creates an instant path."},
+      {id:"victim",name:"Counterweight Victim",initials:"V3",type:"npc",x:11,y:7,note:"Lifting them opens the gate; dropping them opens it immediately."},
+      {id:"fearless1",name:"Following Fearless",initials:"F",type:"enemy",image:`${PORTRAITS}FearlessBefore.png`,x:1,y:8,note:"White fear turns this pursuer into a planner."},
+      {id:"pavel",name:"Pavel",initials:"P",type:"npc",image:`${PORTRAITS}PavelExtraction.png`,x:13,y:5,note:"He follows calmly despite his burned hands and cut feet."},
+      {id:"wraith",name:"Lantern Wraith",initials:"LW",type:"enemy",image:`${PORTRAITS}LanternWraith.png`,x:12,y:5,note:"It calls every cruel shortcut efficient, never mandatory."},
+      {id:"unreflected",name:"The Unreflected in the Road",initials:"U",type:"enemy",image:`${PORTRAITS}UnreflectedMirror.png`,x:13,y:8,note:"Every road mirror shows it directly behind Pavel."},
+      {id:"white",name:"PC 6's Discarded Conscience",initials:"W",type:"object",image:`${PORTRAITS}DiscardedFearConscience.png`,x:10,y:5,visible:false,color:"#d9d3c4",glow:"#fffbe8",note:"A milky shard that watches the harm its owner permits."}
     ],
-    counters:[{id:"clock",label:"Unreflected",max:4,value:0}],
+    counters:[{id:"stations",label:"Stations cleared",max:3,value:0},{id:"delay",label:"Pursuit delay",max:3,value:0},{id:"clock",label:"Unreflected",max:4,value:3}],
     steps:[
-      {actor:"GM",title:"The lantern stands open",instruction:"Pavel faces the Wraith. The Unreflected behind him copies each movement a fraction before he makes it.",tags:["Story scene","No puzzle"]},
-      {actor:"Pavel",title:"Why he came back",instruction:"Pavel says, 'Mama cries because I keep coming here. I know I should stop, but I don't want to be afraid again.'",tags:["Pavel understands the harm"]},
-      {actor:"Memory",title:"The final removal",instruction:"The Wraith says, 'Then let me take the part that accuses you.' Pavel agrees. Reveal the white flame beside the lantern as it is drawn inside.",tags:["Finale clue: white"],patch:{pieces:{white:{visible:true,x:8,y:3}}}},
-      {actor:"GM",title:"The doorway aligns",instruction:"Move the Unreflected directly behind Pavel. Their silhouettes align. Red, blue, and white light reveal the Hall of Unmade Screams and the real Pavel beyond.",tags:["Memory complete","Finale revealed"],patch:{pieces:{unreflected:{x:6,y:5}},features:{exit:{hidden:false}}}}
+      {actor:"GM setup",title:"The Wraith offers efficiency",instruction:"The Wraith leads Pavel toward the Hall. At every station it describes the cruel shortcut in the same patient voice: 'You may save them after you are safe, if there is time.'",tags:["Live pursuit","Three choices"]},
+      {actor:"Party",title:"Free the trapped wanderer",instruction:"A PC succeeds at the first compassionate check and frees the wanderer before lowering the bridge. Mark one station cleared; Pursuit Delay remains 0.",tags:["Compassion succeeds","No fear shed"],patch:{pieces:{wanderer:{x:3,y:3,state:"freed"}},counters:{stations:1}}},
+      {actor:"PC 6",title:"Fail at the captive mirror",instruction:"PC 6 fails to open the second frame and chooses to shed Conscience. The frame opens immediately; reveal the white token where hesitation was removed.",tags:["Shed Conscience","Automatic success"],patch:{pieces:{captive:{x:7,y:3,state:"freed"},white:{visible:true}},counters:{stations:2,clock:4}}},
+      {actor:"Initiative 20",title:"The Fearless learns to plan",instruction:"The pursuer consumes the white token. Replace it with the Conscience-fed state. It releases the final counterweight itself, dropping the victim; its efficient cruelty adds no Pursuit Delay.",tags:["White consumed","Coordinated enemy"],patch:{pieces:{white:{visible:false},fearless1:{x:10,y:6,name:"Conscience-Fed Fearless",initials:"FC",image:`${PORTRAITS}FearlessConscience.png`,state:"fed-conscience"},victim:{x:11,y:9,state:"fallen"}},counters:{stations:3}}},
+      {actor:"Party",title:"Enter the Hall one step behind",instruction:"Move the party through the portal as the Wraith places Pavel beneath the extractor. Pursuit Delay is below 3, so start the finale with no Open Door marks. Carry Ilona's shard onto the next map.",tags:["Finale reached","Open Door 0"],patch:{pieces:{pc1:{x:13,y:3},pc2:{x:13,y:4},pc3:{x:13,y:5},pc4:{x:13,y:6},pc5:{x:12,y:3},pc6:{x:12,y:5},pc7:{x:12,y:7},pavel:{x:14,y:5},wraith:{x:14,y:4}}}}
     ]
   },
   {
@@ -296,60 +318,48 @@ const scenes = [
     cols: 14,
     rows: 10,
     rules: {
-      goal: "Restore Pavel's three fears before three Open Door marks let the Unreflected enter him, then resolve the lantern.",
-      setup: ["Place Pavel in his zone and the Unreflected directly behind him.", "Place all three flames on the lantern.", "Set Round to 1, Open Door to 0, and Fears Restored to 0.", "Place six destructible anchor mirrors."],
-      actions: ["Free a flame: action and DC 15 Sleight of Hand, Arcana, or Religion; DC 17 Athletics; or accept a Fear Bruise after failure.", "Restore a freed flame: action adjacent to Pavel plus a concrete explanation of what it protects.", "Attack, negotiate with, or evade the Wraith normally."],
-      solve: ["Restore red to suppress Searing Warning.", "Restore blue to suppress Isolating Pane.", "Restore white to suppress Curated Terror.", "Extinguish, reform, or claim the lantern after all three are restored."],
-      failure: "At initiative 20, add one Open Door mark when restored fears are fewer than the round number. At three marks, restore a fear before the end of the next round or the Unreflected crosses in Pavel."
+      goal: "Free Pavel's three living fears, keep them from the Fearless, and return them before the Unreflected uses him as a doorway.",
+      setup: ["Place Pavel beneath the extractor, the Unreflected in every terminal mirror, and the Wraith beside the controls.", "Place red, blue, and white fear on the extractor; place three Fearless in the nave.", "Set Round to 1, Open Door to the Lantern Road result, and Fears Restored to 0. Bring Ilona's shard if rescued."],
+      actions: ["Open a shutter: adjacent action and DC 15 Sleight of Hand, Arcana, Religion, or tool; DC 17 Athletics also works.", "Carry or pass a freed fear. At initiative 20 each Fearless moves 4 squares toward the nearest free fear and consumes it when adjacent.", "Return fear with an adjacent action when its recognition condition is physically present. A consumed fear drops if its carrier is defeated, or can be extracted from a restrained carrier with a DC 15 action."],
+      solve: ["Pain recognizes Pavel when someone pulls him away from immediate harm.", "Loss recognizes Ilona's drawing, voice, or rescued reflection.", "Conscience recognizes clear evidence of the harm his choices caused Ilona.", "After all three return, extinguish, reform, or claim the extractor and lantern."],
+      failure: "At initiative 20, add one Open Door mark when restored fears are fewer than the round number. At three marks, the party has until the end of the next round to restore any fear or the Unreflected crosses through Pavel."
     },
-    manifest:["14 x 10 gridded encounter mat", "7 PC miniatures", "Pavel miniature", "Large Lantern Wraith miniature", "Unreflected silhouette", "1 lantern object", "3 colored fear flames", "6 anchor mirror tiles", "3 Open Door counters", "Fear Bruise tokens", "Round marker"],
+    manifest:["14 x 10 black-glass cathedral grid", "7 PC miniatures", "Pavel extraction miniature", "Large Lantern Wraith miniature", "Unreflected mirror silhouette", "1 fear extractor", "3 Fearless miniatures plus 3 mutation state cards each", "1 red Pain creature", "1 blue Loss creature", "1 white Conscience creature", "1 Ilona reflection shard", "6 terminal mirror pillars", "3 Open Door counters", "1 round marker"],
     features:[
-      {id:"a1",type:"anchor",x:2,y:1,w:1,h:2,label:"A1"},{id:"a2",type:"anchor",x:7,y:1,w:1,h:2,label:"A2"},{id:"a3",type:"anchor",x:12,y:1,w:1,h:2,label:"A3"},
-      {id:"a4",type:"anchor",x:2,y:9,w:1,h:2,label:"A4"},{id:"a5",type:"anchor",x:7,y:9,w:1,h:2,label:"A5"},{id:"a6",type:"anchor",x:12,y:9,w:1,h:2,label:"A6"},
-      {id:"lantern-zone",type:"zone",x:10,y:4,w:2,h:3,label:"LANTERN"},
+      {id:"a1",type:"mirror",x:2,y:1,w:1,h:2,label:"TERMINAL"},{id:"a2",type:"mirror",x:7,y:1,w:1,h:2,label:"TERMINAL"},{id:"a3",type:"mirror",x:12,y:1,w:1,h:2,label:"TERMINAL"},
+      {id:"a4",type:"mirror",x:2,y:9,w:1,h:2,label:"TERMINAL"},{id:"a5",type:"mirror",x:7,y:9,w:1,h:2,label:"TERMINAL"},{id:"a6",type:"mirror",x:12,y:9,w:1,h:2,label:"TERMINAL"},
+      {id:"lantern-zone",type:"zone",x:9,y:4,w:3,h:3,label:"FEAR EXTRACTOR"},
       {id:"pavel-zone",type:"zone",x:12,y:4,w:2,h:3,label:"PAVEL"},
       {id:"entry",type:"portal",x:1,y:4,w:1,h:3,label:"ENTRY"}
     ],
     pieces:[
       ...pcPieces([[2,4],[2,5],[2,6],[3,3],[3,4],[3,6],[3,7]]),
-      {id:"wraith",name:"Lantern Wraith",initials:"LW",type:"enemy",image:`${PORTRAITS}LanternWraith.png`,x:9,y:5,note:"Large flying boss. It can pass through mirror tiles."},
-      {id:"pavel",name:"Pavel",initials:"P",type:"npc",image:`${PORTRAITS}PavelRilsky.png`,x:13,y:5,note:"Three fears must be restored before the Unreflected is expelled."},
-      {id:"unreflected",name:"The Unreflected",initials:"U",type:"enemy",image:`${PORTRAITS}TheUnreflected.png`,x:14,y:5,note:"Environmental threat. Do not give it hit points."},
-      {id:"lantern",name:"Wraith Lantern",initials:"L",type:"light",x:10,y:5,note:"Each colored fear requires one action to free and one action to restore."},
-      {id:"red",name:"Pain Fear",initials:"R",type:"object",x:10,y:4,color:"#bd3c35",glow:"#f05249",note:"Restore to suppress Searing Warning."},
-      {id:"blue",name:"Loss Fear",initials:"B",type:"object",x:10,y:5,color:"#397fc0",glow:"#5ba7ec",note:"Restore to suppress Isolating Pane."},
-      {id:"white",name:"Conscience Fear",initials:"W",type:"object",x:10,y:6,color:"#d9d3c4",glow:"#fffbe8",note:"Restore to suppress Curated Terror."}
+      {id:"wraith",name:"Lantern Wraith",initials:"LW",type:"enemy",image:`${PORTRAITS}LanternWraith.png`,x:8,y:5,note:"It can pass through terminal mirrors and operate the extractor from any one of them."},
+      {id:"pavel",name:"Pavel Under Extraction",initials:"P",type:"npc",image:`${PORTRAITS}PavelExtraction.png`,x:13,y:5,note:"Pull him from immediate harm, return Ilona to him, and show him what his choices cost."},
+      {id:"unreflected",name:"The Unreflected",initials:"U",type:"enemy",image:`${PORTRAITS}UnreflectedMirror.png`,x:14,y:5,note:"A doorway countdown, not a creature with hit points."},
+      {id:"lantern",name:"Fear Extractor",initials:"FX",type:"light",image:`${PORTRAITS}FearExtractor.png`,x:10,y:5,note:"Each shutter holds one living piece of Pavel's fear."},
+      {id:"fearless1",name:"Fearless Seeker",initials:"F1",type:"enemy",image:`${PORTRAITS}FearlessBefore.png`,x:6,y:3,note:"Moves toward free fear at initiative 20."},
+      {id:"fearless2",name:"Fearless Seeker",initials:"F2",type:"enemy",image:`${PORTRAITS}FearlessBefore.png`,x:6,y:5,note:"Consumes fear only when adjacent to it."},
+      {id:"fearless3",name:"Fearless Seeker",initials:"F3",type:"enemy",image:`${PORTRAITS}FearlessBefore.png`,x:6,y:7,note:"A consumed fear remains recoverable from this carrier."},
+      {id:"ilona",name:"Ilona's Reflection Shard",initials:"I",type:"npc",image:`${PORTRAITS}CaptiveReflections.png`,x:3,y:5,note:"If rescued, her voice makes Pavel's Loss recognize him."},
+      {id:"red",name:"Pavel's Pain",initials:"R",type:"object",image:`${PORTRAITS}DiscardedFearPain.png`,x:10,y:4,color:"#bd3c35",glow:"#f05249",note:"Recognition: pull Pavel away from immediate harm."},
+      {id:"blue",name:"Pavel's Loss",initials:"B",type:"object",image:`${PORTRAITS}DiscardedFearLoss.png`,x:10,y:5,color:"#397fc0",glow:"#5ba7ec",note:"Recognition: Ilona's drawing, voice, or reflection."},
+      {id:"white",name:"Pavel's Conscience",initials:"W",type:"object",image:`${PORTRAITS}DiscardedFearConscience.png`,x:10,y:6,color:"#d9d3c4",glow:"#fffbe8",note:"Recognition: evidence of the harm Pavel's choices caused Ilona."}
     ],
     counters:[{id:"round",label:"Round",max:4,value:1},{id:"door",label:"Open Door",max:3,value:0},{id:"flames",label:"Fears restored",max:3,value:0,className:"flames"}],
     steps:[
-      {actor:"GM setup",title:"Three linked objectives",instruction:"Put the flames on the lantern, Pavel in his zone, and the Unreflected directly behind him. Six mirrors are destructible anchors.",tags:["Initiative begins","Round 1"]},
-      {actor:"PC 1",title:"Free the red flame",instruction:"Move adjacent to the lantern. On a successful free-flame action, move R one square out and give it a glow marker.",tags:["Action 1 of 2","DC 15 or cost"],patch:{pieces:{pc1:{x:9,y:4},red:{x:9,y:3,state:"freed"}}}},
-      {actor:"PC 2",title:"Return pain to Pavel",instruction:"Carry R adjacent to Pavel and use an action to show that pain protects his body. Put R beneath Pavel's base. Searing Warning switches off.",tags:["Fear restored","Remove 1 Door mark"],patch:{pieces:{pc2:{x:12,y:4},red:{x:13,y:5,state:"restored"}},counters:{flames:1}}},
+      {actor:"GM setup",title:"Three living fears under glass",instruction:"Put each fear on its extractor shutter, Pavel in the restraint zone, Ilona's shard with the party, and three Fearless in the nave. Every terminal mirror shows the Unreflected behind Pavel.",tags:["Initiative begins","Round 1"]},
+      {actor:"PC 1",title:"Free Pain",instruction:"PC 1 opens the red shutter and moves Pain into the nave. It recoils from the extractor and whimpers in Pavel's voice; the Fearless immediately turn toward it.",tags:["DC 15 shutter","Living objective"],patch:{pieces:{pc1:{x:9,y:4},red:{x:9,y:3,state:"freed"}}}},
+      {actor:"PC 2",title:"Make Pain recognize Pavel",instruction:"PC 2 pulls Pavel out of the burning restraint beam, then presses red into his reflection. The returned warning hits him as pain and panic; put R beneath his base.",tags:["Physical recognition","Fear restored"],patch:{pieces:{pc2:{x:12,y:4},pavel:{x:12,y:5},red:{x:12,y:5,state:"restored"}},counters:{flames:1}}},
       {actor:"Initiative 20",title:"Pavel meets the round threshold",instruction:"At the start of Round 2 he has one restored fear, matching the previous round requirement. Add no Open Door mark.",tags:["Round 2","Door remains 0"],patch:{counters:{round:2}}},
-      {actor:"PCs 3-4",title:"Free and return the blue flame",instruction:"PC 3 frees B from the lantern. PC 4 carries it to Pavel and identifies the bond protected by fear of loss.",tags:["Two actions","Isolating Pane off"],patch:{pieces:{pc3:{x:9,y:5},pc4:{x:12,y:6},blue:{x:13,y:5,state:"restored"}},counters:{flames:2}}},
-      {actor:"PCs 5-6",title:"Free and return the white flame",instruction:"PC 5 opens the final shutter. PC 6 restores Pavel's fear of wrongdoing by naming the boundary it protects.",tags:["Curated Terror off","Unreflected exposed"],patch:{pieces:{pc5:{x:9,y:6},pc6:{x:12,y:5},white:{x:13,y:5,state:"restored"}},counters:{flames:3}}},
-      {actor:"PC 7",title:"Resolve the lantern",instruction:"Choose: extinguish it to close the breach, negotiate consent rules to preserve the passage, or claim it and keep the breach portable.",tags:["Ending choice","Unreflected expelled"],patch:{pieces:{pc7:{x:10,y:5},unreflected:{visible:false},wraith:{x:11,y:3}},counters:{round:3,door:0,flames:3}}}
+      {actor:"PCs 3-4",title:"Return Loss with Ilona",instruction:"PC 3 frees blue while PC 4 carries Ilona's shard to Pavel. Her reflection says his name; Loss crawls to him and bursts back as grief and desperate attachment.",tags:["Ilona required","Fear restored"],patch:{pieces:{pc3:{x:9,y:5},pc4:{x:12,y:6},ilona:{x:12,y:6},blue:{x:12,y:5,state:"restored"}},counters:{flames:2}}},
+      {actor:"PCs 5-6",title:"Return Conscience with consequence",instruction:"PC 5 frees white. PC 6 shows Pavel Ilona's trapped reflection and the wounds he accepted while she searched for him. The watching shard returns as remorse.",tags:["Evidence, not speech puzzle","Fear restored"],patch:{pieces:{pc5:{x:9,y:6},pc6:{x:11,y:5},white:{x:12,y:5,state:"restored"}},counters:{flames:3}}},
+      {actor:"PC 7",title:"Resolve the apparatus",instruction:"Choose: destroy it and seal this route, bind it so fear can only be removed with continuing consent, or claim it and accept responsibility for the breach it carries. The restored Pavel expels the Unreflected.",tags:["Ending choice","Unreflected expelled"],patch:{pieces:{pc7:{x:10,y:5},unreflected:{visible:false},wraith:{x:8,y:2}},counters:{round:3,door:0,flames:3}}}
     ]
   }
 ];
 
 const sceneReferences = {
-  pain: [
-    { title: "Interior of Shabby Mirror Chamber", src: "reference_images/first-visit-shabby-mirror-chamber.jpg" },
-    { title: "Dangerously Hot Glass", src: "reference_images/first-visit-dangerously-hot-glass.jpg" },
-    { title: "Wraith Mirror", src: "reference_images/first-visit-wraith-mirror.jpg" }
-  ],
-  loss: [
-    { title: "Wagon Exterior", src: "reference_images/return-wagon-exterior.jpg" },
-    { title: "Wagon Door", src: "reference_images/return-wagon-door.jpg" },
-    { title: "Impossibly Deep Interior", src: "reference_images/return-impossibly-deep-interior.jpg" },
-    { title: "Ilona's Departure", src: "reference_images/return-ilonas-departure.jpg" }
-  ],
-  shame: [
-    { title: "Open Mirror Enclosure", src: "reference_images/cure-open-mirror-enclosure.jpg" },
-    { title: "Alignment Mirror", src: "reference_images/cure-alignment-mirror.jpg" },
-    { title: "Open Alignment and Hall Entrance", src: "reference_images/cure-open-alignment-and-hall-entrance.jpg" }
-  ],
   finale: [
     { title: "Anchor Mirrors", src: "reference_images/unmade-anchor.jpg" },
     { title: "Lantern Area and Terminal Mirror", src: "reference_images/unmade-lantern-area-and-terminal-mirror.jpg" },

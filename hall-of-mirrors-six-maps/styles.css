@@ -203,6 +203,12 @@ h3 { margin-bottom: 8px; font-size: 20px; }
 .feature.monolith { border: 3px solid #90bec1; background: linear-gradient(135deg, #172224, #4d7074 50%, #101718 53%, #38585c); box-shadow: 0 0 18px rgba(110,214,220,.35); }
 .feature.path { border: 0; border-radius: 50%; background: rgba(201,186,146,.2); }
 .feature.anchor { border-color: #a8dadd; background: rgba(108,164,168,.2); }
+.feature.void { z-index: 1; border: 0; color: rgba(205,235,237,.34); background: repeating-radial-gradient(ellipse at center, #0a1112 0 7%, #162528 8% 12%, #080d0e 13% 19%); }
+.feature.hazard { border-color: #d65b4f; background: repeating-linear-gradient(135deg, rgba(213,64,49,.48) 0 8px, rgba(51,17,17,.65) 8px 16px); box-shadow: inset 0 0 20px rgba(255,94,59,.45); }
+.feature.island { border-color: #8dbfc1; background: linear-gradient(145deg, rgba(106,156,158,.44), rgba(20,34,36,.92) 52%, rgba(90,132,135,.34)); box-shadow: inset 0 0 16px rgba(183,235,237,.2); }
+.feature.bridge { border-color: #d3e5df; border-style: dashed; background: repeating-linear-gradient(90deg, rgba(197,226,222,.4) 0 18%, rgba(20,34,36,.88) 18% 26%); }
+.feature.road { border-color: #a7d1d3; background: linear-gradient(90deg, rgba(75,114,117,.28), rgba(199,225,223,.19), rgba(75,114,117,.28)); }
+.feature.choice { border-color: #d2a850; border-style: dashed; background: linear-gradient(180deg, rgba(26,44,46,.76), rgba(128,59,47,.34)); box-shadow: inset 0 0 0 3px rgba(10,17,18,.45); }
 .feature.hidden { opacity: 0; }
 body:not(.show-gm) .feature.gm-only { opacity: 0; }
 
@@ -237,6 +243,8 @@ body:not(.show-gm) .feature.gm-only { opacity: 0; }
 .piece.inactive { filter: grayscale(1); opacity: .35; box-shadow: 0 3px 7px rgba(0,0,0,.5); }
 .piece.freed { box-shadow: 0 0 22px 8px var(--glow, #fff), 0 3px 7px black; }
 .piece.restored { opacity: .42; transform: translate(-50%, -50%) scale(.76); }
+.piece.fed-loss { border-color: #6bb9eb; box-shadow: 0 0 18px rgba(70,155,221,.8), inset 0 0 0 2px rgba(0,0,0,.35); }
+.piece.fed-conscience { border-color: #fff8db; box-shadow: 0 0 18px rgba(255,248,219,.75), inset 0 0 0 2px rgba(0,0,0,.35); }
 .piece img { width: 100%; height: 100%; object-fit: cover; border-radius: inherit; pointer-events: none; }
 .piece .initials { font-weight: 800; font-size: clamp(9px, 1.2vw, 15px); text-shadow: 0 1px 2px black; pointer-events: none; }
 .piece .piece-label { position: absolute; top: calc(100% + 3px); left: 50%; transform: translateX(-50%); display: none; width: max-content; max-width: 120px; padding: 1px 4px; border-radius: 2px; color: white; background: rgba(12,13,13,.88); font-size: clamp(8px, .9vw, 11px); line-height: 1.15; text-align: center; pointer-events: none; }
