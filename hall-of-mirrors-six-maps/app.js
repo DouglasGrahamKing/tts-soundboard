@@ -360,6 +360,15 @@ const scenes = [
 ];
 
 const sceneReferences = {
+  pain: [
+    { title: "The Razor Waste", src: `${PORTRAITS}RazorWaste.png` }
+  ],
+  loss: [
+    { title: "The Gallery of Severed Bonds", src: `${PORTRAITS}GalleryOfSeveredBonds.png` }
+  ],
+  shame: [
+    { title: "The Lantern Road", src: `${PORTRAITS}LanternRoad.png` }
+  ],
   finale: [
     { title: "Anchor Mirrors", src: "reference_images/unmade-anchor.jpg" },
     { title: "Lantern Area and Terminal Mirror", src: "reference_images/unmade-lantern-area-and-terminal-mirror.jpg" },
